@@ -1,0 +1,168 @@
+---
+source_url: https://api.github.com/repos/kiali/kiali/contents/docs/agents
+ingested: 2026-09-17
+sha256: 4b5567ed1d7b2b1bb47973d70337c3308accb106cc53f58c5b19c61e5288a8ed
+note: GitHub API response (list of docs/agents/ dir)
+---
+[
+  {
+    "name": ".claims.yml",
+    "path": "docs/agents/.claims.yml",
+    "sha": "a91cf4b8b0b97064a916768f61268f657bfb8df8",
+    "size": 23009,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/.claims.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/docs/agents/.claims.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/a91cf4b8b0b97064a916768f61268f657bfb8df8",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/docs/agents/.claims.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/.claims.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/a91cf4b8b0b97064a916768f61268f657bfb8df8",
+      "html": "https://github.com/kiali/kiali/blob/master/docs/agents/.claims.yml"
+    }
+  },
+  {
+    "name": "STATUS.md",
+    "path": "docs/agents/STATUS.md",
+    "sha": "2ea77035e6ccb738deaf2c01bf716dc12e93b79b",
+    "size": 2250,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/STATUS.md?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/docs/agents/STATUS.md",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/2ea77035e6ccb738deaf2c01bf716dc12e93b79b",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/docs/agents/STATUS.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/STATUS.md?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/2ea77035e6ccb738deaf2c01bf716dc12e93b79b",
+      "html": "https://github.com/kiali/kiali/blob/master/docs/agents/STATUS.md"
+    }
+  },
+  {
+    "name": "auth-and-security.md",
+    "path": "docs/agents/auth-and-security.md",
+    "sha": "37e2e5b858256196aa0f595113eb43aa89a6d382",
+    "size": 33647,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/auth-and-security.md?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/docs/agents/auth-and-security.md",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/37e2e5b858256196aa0f595113eb43aa89a6d382",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/docs/agents/auth-and-security.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/auth-and-security.md?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/37e2e5b858256196aa0f595113eb43aa89a6d382",
+      "html": "https://github.com/kiali/kiali/blob/master/docs/agents/auth-and-security.md"
+    }
+  },
+  {
+    "name": "backend-architecture.md",
+    "path": "docs/agents/backend-architecture.md",
+    "sha": "178555e71ebfbe39ded7e14295cbe18e721f8909",
+    "size": 14635,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/backend-architecture.md?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/docs/agents/backend-architecture.md",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/178555e71ebfbe39ded7e14295cbe18e721f8909",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/docs/agents/backend-architecture.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/backend-architecture.md?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/178555e71ebfbe39ded7e14295cbe18e721f8909",
+      "html": "https://github.com/kiali/kiali/blob/master/docs/agents/backend-architecture.md"
+    }
+  },
+  {
+    "name": "build-and-dev-conventions.md",
+    "path": "docs/agents/build-and-dev-conventions.md",
+    "sha": "d382ba75f1797a5f2ca9c87d04cc9c938e84ef5b",
+    "size": 19346,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/build-and-dev-conventions.md?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/docs/agents/build-and-dev-conventions.md",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/d382ba75f1797a5f2ca9c87d04cc9c938e84ef5b",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/docs/agents/build-and-dev-conventions.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/build-and-dev-conventions.md?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/d382ba75f1797a5f2ca9c87d04cc9c938e84ef5b",
+      "html": "https://github.com/kiali/kiali/blob/master/docs/agents/build-and-dev-conventions.md"
+    }
+  },
+  {
+    "name": "business-logic.md",
+    "path": "docs/agents/business-logic.md",
+    "sha": "b0099a6802f503e0e9b385980aa48ddbdb517b6b",
+    "size": 21401,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/business-logic.md?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/docs/agents/business-logic.md",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/b0099a6802f503e0e9b385980aa48ddbdb517b6b",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/docs/agents/business-logic.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/business-logic.md?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/b0099a6802f503e0e9b385980aa48ddbdb517b6b",
+      "html": "https://github.com/kiali/kiali/blob/master/docs/agents/business-logic.md"
+    }
+  },
+  {
+    "name": "frontend-architecture.md",
+    "path": "docs/agents/frontend-architecture.md",
+    "sha": "233b567427209e3f5503bfc18a018eb1d146c550",
+    "size": 32019,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/frontend-architecture.md?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/docs/agents/frontend-architecture.md",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/233b567427209e3f5503bfc18a018eb1d146c550",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/docs/agents/frontend-architecture.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/frontend-architecture.md?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/233b567427209e3f5503bfc18a018eb1d146c550",
+      "html": "https://github.com/kiali/kiali/blob/master/docs/agents/frontend-architecture.md"
+    }
+  },
+  {
+    "name": "graph-engine.md",
+    "path": "docs/agents/graph-engine.md",
+    "sha": "84de92ceffeae287e0800ded22e3bd619b2f743e",
+    "size": 23824,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/graph-engine.md?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/docs/agents/graph-engine.md",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/84de92ceffeae287e0800ded22e3bd619b2f743e",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/docs/agents/graph-engine.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/graph-engine.md?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/84de92ceffeae287e0800ded22e3bd619b2f743e",
+      "html": "https://github.com/kiali/kiali/blob/master/docs/agents/graph-engine.md"
+    }
+  },
+  {
+    "name": "kubernetes-client.md",
+    "path": "docs/agents/kubernetes-client.md",
+    "sha": "c495a997067b9d3fb5cbb9793e53b66e961eb156",
+    "size": 15108,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/kubernetes-client.md?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/docs/agents/kubernetes-client.md",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/c495a997067b9d3fb5cbb9793e53b66e961eb156",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/docs/agents/kubernetes-client.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/kubernetes-client.md?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/c495a997067b9d3fb5cbb9793e53b66e961eb156",
+      "html": "https://github.com/kiali/kiali/blob/master/docs/agents/kubernetes-client.md"
+    }
+  },
+  {
+    "name": "observability-and-ai.md",
+    "path": "docs/agents/observability-and-ai.md",
+    "sha": "ffe15eebab576b552746edcbe721cced7d14f2fb",
+    "size": 24295,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/observability-and-ai.md?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/docs/agents/observability-and-ai.md",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/ffe15eebab576b552746edcbe721cced7d14f2fb",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/docs/agents/observability-and-ai.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/docs/agents/observability-and-ai.md?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/ffe15eebab576b552746edcbe721cced7d14f2fb",
+      "html": "https://github.com/kiali/kiali/blob/master/docs/agents/observability-and-ai.md"
+    }
+  }
+]

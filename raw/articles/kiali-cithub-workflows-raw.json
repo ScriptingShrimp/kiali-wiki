@@ -1,0 +1,568 @@
+---
+source_url: https://api.github.com/repos/kiali/kiali/contents/.github/workflows
+ingested: 2026-09-17
+sha256: be18db8b9255938d453a73152265f63c3353894037d722fdf1558e6dbeb7f8d8
+note: GitHub API response (list of .github/workflows), not a rendered document
+---
+[
+  {
+    "name": "build-backend.yml",
+    "path": ".github/workflows/build-backend.yml",
+    "sha": "cbe796a119f91a356058b426708e090f93008a14",
+    "size": 1414,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/build-backend.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/build-backend.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/cbe796a119f91a356058b426708e090f93008a14",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/build-backend.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/build-backend.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/cbe796a119f91a356058b426708e090f93008a14",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/build-backend.yml"
+    }
+  },
+  {
+    "name": "build-frontend.yml",
+    "path": ".github/workflows/build-frontend.yml",
+    "sha": "af73abfba0bd3ca17742f9c425f167c318392468",
+    "size": 1267,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/build-frontend.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/build-frontend.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/af73abfba0bd3ca17742f9c425f167c318392468",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/build-frontend.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/build-frontend.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/af73abfba0bd3ca17742f9c425f167c318392468",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/build-frontend.yml"
+    }
+  },
+  {
+    "name": "bump-release-version.yml",
+    "path": ".github/workflows/bump-release-version.yml",
+    "sha": "0c3e17abdf5479a4803a1eb08a1dc0dd7801f0a8",
+    "size": 3574,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/bump-release-version.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/bump-release-version.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/0c3e17abdf5479a4803a1eb08a1dc0dd7801f0a8",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/bump-release-version.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/bump-release-version.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/0c3e17abdf5479a4803a1eb08a1dc0dd7801f0a8",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/bump-release-version.yml"
+    }
+  },
+  {
+    "name": "codecov-master-baseline.yml",
+    "path": ".github/workflows/codecov-master-baseline.yml",
+    "sha": "961355194d145a2ca78a9a16c481635181701bc9",
+    "size": 1655,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/codecov-master-baseline.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/codecov-master-baseline.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/961355194d145a2ca78a9a16c481635181701bc9",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/codecov-master-baseline.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/codecov-master-baseline.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/961355194d145a2ca78a9a16c481635181701bc9",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/codecov-master-baseline.yml"
+    }
+  },
+  {
+    "name": "integration-tests-backend-mcp.yml",
+    "path": ".github/workflows/integration-tests-backend-mcp.yml",
+    "sha": "7e52cbc2fccc9c067213a24f24a382f937c668ff",
+    "size": 3834,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-backend-mcp.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-backend-mcp.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/7e52cbc2fccc9c067213a24f24a382f937c668ff",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/integration-tests-backend-mcp.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-backend-mcp.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/7e52cbc2fccc9c067213a24f24a382f937c668ff",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-backend-mcp.yml"
+    }
+  },
+  {
+    "name": "integration-tests-backend-multicluster-external-controlplane.yml",
+    "path": ".github/workflows/integration-tests-backend-multicluster-external-controlplane.yml",
+    "sha": "fecb175ad20d960f79b319b139ffd8e21a95ace7",
+    "size": 3418,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-backend-multicluster-external-controlplane.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-backend-multicluster-external-controlplane.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/fecb175ad20d960f79b319b139ffd8e21a95ace7",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/integration-tests-backend-multicluster-external-controlplane.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-backend-multicluster-external-controlplane.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/fecb175ad20d960f79b319b139ffd8e21a95ace7",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-backend-multicluster-external-controlplane.yml"
+    }
+  },
+  {
+    "name": "integration-tests-backend.yml",
+    "path": ".github/workflows/integration-tests-backend.yml",
+    "sha": "5e8bda37e1df047bea900857bb6892dbb6b97b24",
+    "size": 4407,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-backend.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-backend.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/5e8bda37e1df047bea900857bb6892dbb6b97b24",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/integration-tests-backend.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-backend.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/5e8bda37e1df047bea900857bb6892dbb6b97b24",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-backend.yml"
+    }
+  },
+  {
+    "name": "integration-tests-frontend-ambient-multi-primary.yml",
+    "path": ".github/workflows/integration-tests-frontend-ambient-multi-primary.yml",
+    "sha": "3135b5434ce34f80b490236ef5bc50f6e38a56cb",
+    "size": 4182,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-ambient-multi-primary.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-ambient-multi-primary.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/3135b5434ce34f80b490236ef5bc50f6e38a56cb",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/integration-tests-frontend-ambient-multi-primary.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-ambient-multi-primary.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/3135b5434ce34f80b490236ef5bc50f6e38a56cb",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-ambient-multi-primary.yml"
+    }
+  },
+  {
+    "name": "integration-tests-frontend-ambient.yml",
+    "path": ".github/workflows/integration-tests-frontend-ambient.yml",
+    "sha": "5d72a9c81c6577380554e96d8db5713aa582e15b",
+    "size": 4219,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-ambient.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-ambient.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/5d72a9c81c6577380554e96d8db5713aa582e15b",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/integration-tests-frontend-ambient.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-ambient.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/5d72a9c81c6577380554e96d8db5713aa582e15b",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-ambient.yml"
+    }
+  },
+  {
+    "name": "integration-tests-frontend-chat.yml",
+    "path": ".github/workflows/integration-tests-frontend-chat.yml",
+    "sha": "3ca6925d09b90cadcb076a41658fd2e5fac067e3",
+    "size": 3976,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-chat.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-chat.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/3ca6925d09b90cadcb076a41658fd2e5fac067e3",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/integration-tests-frontend-chat.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-chat.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/3ca6925d09b90cadcb076a41658fd2e5fac067e3",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-chat.yml"
+    }
+  },
+  {
+    "name": "integration-tests-frontend-core-1.yml",
+    "path": ".github/workflows/integration-tests-frontend-core-1.yml",
+    "sha": "c45ec6e6d43ac822138b614a76e1563e7cf40107",
+    "size": 4660,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-core-1.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-core-1.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/c45ec6e6d43ac822138b614a76e1563e7cf40107",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/integration-tests-frontend-core-1.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-core-1.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/c45ec6e6d43ac822138b614a76e1563e7cf40107",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-core-1.yml"
+    }
+  },
+  {
+    "name": "integration-tests-frontend-core-2.yml",
+    "path": ".github/workflows/integration-tests-frontend-core-2.yml",
+    "sha": "24fb21951c672ef18259ebaf8938a24e0c677eef",
+    "size": 4659,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-core-2.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-core-2.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/24fb21951c672ef18259ebaf8938a24e0c677eef",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/integration-tests-frontend-core-2.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-core-2.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/24fb21951c672ef18259ebaf8938a24e0c677eef",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-core-2.yml"
+    }
+  },
+  {
+    "name": "integration-tests-frontend-core-caching.yml",
+    "path": ".github/workflows/integration-tests-frontend-core-caching.yml",
+    "sha": "4a2a562959d6d700fb181e56d5354eb0e6c31cd5",
+    "size": 4737,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-core-caching.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-core-caching.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/4a2a562959d6d700fb181e56d5354eb0e6c31cd5",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/integration-tests-frontend-core-caching.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-core-caching.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/4a2a562959d6d700fb181e56d5354eb0e6c31cd5",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-core-caching.yml"
+    }
+  },
+  {
+    "name": "integration-tests-frontend-core-optional.yml",
+    "path": ".github/workflows/integration-tests-frontend-core-optional.yml",
+    "sha": "292ea271c5f379233d600988419441f039ddbddf",
+    "size": 4750,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-core-optional.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-core-optional.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/292ea271c5f379233d600988419441f039ddbddf",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/integration-tests-frontend-core-optional.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-core-optional.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/292ea271c5f379233d600988419441f039ddbddf",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-core-optional.yml"
+    }
+  },
+  {
+    "name": "integration-tests-frontend-local-offline.yml",
+    "path": ".github/workflows/integration-tests-frontend-local-offline.yml",
+    "sha": "04359c8eaec00f0413e6631a96697bc09df9af2d",
+    "size": 4479,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-local-offline.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-local-offline.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/04359c8eaec00f0413e6631a96697bc09df9af2d",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/integration-tests-frontend-local-offline.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-local-offline.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/04359c8eaec00f0413e6631a96697bc09df9af2d",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-local-offline.yml"
+    }
+  },
+  {
+    "name": "integration-tests-frontend-multi-mesh.yml",
+    "path": ".github/workflows/integration-tests-frontend-multi-mesh.yml",
+    "sha": "1301632337e69014a2052cd33d0d2606a6cd5a1e",
+    "size": 4937,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-multi-mesh.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-multi-mesh.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/1301632337e69014a2052cd33d0d2606a6cd5a1e",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/integration-tests-frontend-multi-mesh.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-multi-mesh.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/1301632337e69014a2052cd33d0d2606a6cd5a1e",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-multi-mesh.yml"
+    }
+  },
+  {
+    "name": "integration-tests-frontend-multicluster-external-kiali.yml",
+    "path": ".github/workflows/integration-tests-frontend-multicluster-external-kiali.yml",
+    "sha": "4d0a3ca97c66a066e0dda38c91bbf2c73a8d2773",
+    "size": 4024,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-multicluster-external-kiali.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-multicluster-external-kiali.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/4d0a3ca97c66a066e0dda38c91bbf2c73a8d2773",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/integration-tests-frontend-multicluster-external-kiali.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-multicluster-external-kiali.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/4d0a3ca97c66a066e0dda38c91bbf2c73a8d2773",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-multicluster-external-kiali.yml"
+    }
+  },
+  {
+    "name": "integration-tests-frontend-multicluster-multi-primary.yml",
+    "path": ".github/workflows/integration-tests-frontend-multicluster-multi-primary.yml",
+    "sha": "bcc052ae1ea6f3af6803be02fde91fa41096b2ef",
+    "size": 4310,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-multicluster-multi-primary.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-multicluster-multi-primary.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/bcc052ae1ea6f3af6803be02fde91fa41096b2ef",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/integration-tests-frontend-multicluster-multi-primary.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-multicluster-multi-primary.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/bcc052ae1ea6f3af6803be02fde91fa41096b2ef",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-multicluster-multi-primary.yml"
+    }
+  },
+  {
+    "name": "integration-tests-frontend-multicluster-primary-remote.yml",
+    "path": ".github/workflows/integration-tests-frontend-multicluster-primary-remote.yml",
+    "sha": "85e078b0b2ffcc8045c8fe239a55fc306a7a9419",
+    "size": 4303,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-multicluster-primary-remote.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-multicluster-primary-remote.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/85e078b0b2ffcc8045c8fe239a55fc306a7a9419",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/integration-tests-frontend-multicluster-primary-remote.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-multicluster-primary-remote.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/85e078b0b2ffcc8045c8fe239a55fc306a7a9419",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-multicluster-primary-remote.yml"
+    }
+  },
+  {
+    "name": "integration-tests-frontend-tempo.yml",
+    "path": ".github/workflows/integration-tests-frontend-tempo.yml",
+    "sha": "3c6066ef367881d8226798444c51390f1e1b153e",
+    "size": 4201,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-tempo.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-tempo.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/3c6066ef367881d8226798444c51390f1e1b153e",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/integration-tests-frontend-tempo.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend-tempo.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/3c6066ef367881d8226798444c51390f1e1b153e",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend-tempo.yml"
+    }
+  },
+  {
+    "name": "integration-tests-frontend.yml",
+    "path": ".github/workflows/integration-tests-frontend.yml",
+    "sha": "0c3a65fe647a3f710157b1073194d6e2d32fa39d",
+    "size": 4519,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/0c3a65fe647a3f710157b1073194d6e2d32fa39d",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/integration-tests-frontend.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/integration-tests-frontend.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/0c3a65fe647a3f710157b1073194d6e2d32fa39d",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/integration-tests-frontend.yml"
+    }
+  },
+  {
+    "name": "kiali-ci.yml",
+    "path": ".github/workflows/kiali-ci.yml",
+    "sha": "750f6e36ef49275a4b4fb542f4b8d38d04006976",
+    "size": 15461,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/kiali-ci.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/kiali-ci.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/750f6e36ef49275a4b4fb542f4b8d38d04006976",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/kiali-ci.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/kiali-ci.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/750f6e36ef49275a4b4fb542f4b8d38d04006976",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/kiali-ci.yml"
+    }
+  },
+  {
+    "name": "mcpchecker.yml",
+    "path": ".github/workflows/mcpchecker.yml",
+    "sha": "12a69da4bab491f15a38dd2cde43ffc589e2f24d",
+    "size": 25979,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/mcpchecker.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/mcpchecker.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/12a69da4bab491f15a38dd2cde43ffc589e2f24d",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/mcpchecker.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/mcpchecker.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/12a69da4bab491f15a38dd2cde43ffc589e2f24d",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/mcpchecker.yml"
+    }
+  },
+  {
+    "name": "molecules.yml",
+    "path": ".github/workflows/molecules.yml",
+    "sha": "ff20dffee0771209c4638f1c590b878330fca1f6",
+    "size": 8781,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/molecules.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/molecules.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/ff20dffee0771209c4638f1c590b878330fca1f6",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/molecules.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/molecules.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/ff20dffee0771209c4638f1c590b878330fca1f6",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/molecules.yml"
+    }
+  },
+  {
+    "name": "nightly.yml",
+    "path": ".github/workflows/nightly.yml",
+    "sha": "3177f3d9b82d9489f04f119f5613edfb84257e2b",
+    "size": 4197,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/nightly.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/nightly.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/3177f3d9b82d9489f04f119f5613edfb84257e2b",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/nightly.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/nightly.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/3177f3d9b82d9489f04f119f5613edfb84257e2b",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/nightly.yml"
+    }
+  },
+  {
+    "name": "notify-ossmc-sync.yml",
+    "path": ".github/workflows/notify-ossmc-sync.yml",
+    "sha": "b45c234c5542e4fcdc670c409c0683759de98073",
+    "size": 726,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/notify-ossmc-sync.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/notify-ossmc-sync.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/b45c234c5542e4fcdc670c409c0683759de98073",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/notify-ossmc-sync.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/notify-ossmc-sync.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/b45c234c5542e4fcdc670c409c0683759de98073",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/notify-ossmc-sync.yml"
+    }
+  },
+  {
+    "name": "release-mcp.yml",
+    "path": ".github/workflows/release-mcp.yml",
+    "sha": "0ebe92ff86c57b94a815e83c46b528a1037ee6f0",
+    "size": 13224,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/release-mcp.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/release-mcp.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/0ebe92ff86c57b94a815e83c46b528a1037ee6f0",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/release-mcp.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/release-mcp.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/0ebe92ff86c57b94a815e83c46b528a1037ee6f0",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/release-mcp.yml"
+    }
+  },
+  {
+    "name": "release.yml",
+    "path": ".github/workflows/release.yml",
+    "sha": "534d8a95db7d6b3b1f828358e0909c253c659fea",
+    "size": 14913,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/release.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/release.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/534d8a95db7d6b3b1f828358e0909c253c659fea",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/release.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/release.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/534d8a95db7d6b3b1f828358e0909c253c659fea",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/release.yml"
+    }
+  },
+  {
+    "name": "report-to-reportportal.yml",
+    "path": ".github/workflows/report-to-reportportal.yml",
+    "sha": "aa73c0a4c8deab67cdc5a46a470675b2d2dd33a0",
+    "size": 6985,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/report-to-reportportal.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/report-to-reportportal.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/aa73c0a4c8deab67cdc5a46a470675b2d2dd33a0",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/report-to-reportportal.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/report-to-reportportal.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/aa73c0a4c8deab67cdc5a46a470675b2d2dd33a0",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/report-to-reportportal.yml"
+    }
+  },
+  {
+    "name": "tag-release-creator.yml",
+    "path": ".github/workflows/tag-release-creator.yml",
+    "sha": "740041c64f01f54a128f7e45e67e2d1954e436c1",
+    "size": 2806,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/tag-release-creator.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/tag-release-creator.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/740041c64f01f54a128f7e45e67e2d1954e436c1",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/tag-release-creator.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/tag-release-creator.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/740041c64f01f54a128f7e45e67e2d1954e436c1",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/tag-release-creator.yml"
+    }
+  },
+  {
+    "name": "test-images-creator.yml",
+    "path": ".github/workflows/test-images-creator.yml",
+    "sha": "de5047df35a347cf69a97380363182f76fb24d87",
+    "size": 3823,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/test-images-creator.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/test-images-creator.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/de5047df35a347cf69a97380363182f76fb24d87",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/test-images-creator.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/test-images-creator.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/de5047df35a347cf69a97380363182f76fb24d87",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/test-images-creator.yml"
+    }
+  },
+  {
+    "name": "test-images-update-latest.yml",
+    "path": ".github/workflows/test-images-update-latest.yml",
+    "sha": "d74e95fd67e472776ff089d97e3c5886891b87c7",
+    "size": 2274,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/test-images-update-latest.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/test-images-update-latest.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/d74e95fd67e472776ff089d97e3c5886891b87c7",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/test-images-update-latest.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/test-images-update-latest.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/d74e95fd67e472776ff089d97e3c5886891b87c7",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/test-images-update-latest.yml"
+    }
+  },
+  {
+    "name": "test-istio-version.yml",
+    "path": ".github/workflows/test-istio-version.yml",
+    "sha": "d79faf2058c95e692d0b2f87fd4496949ff5e027",
+    "size": 13199,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/test-istio-version.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/test-istio-version.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/d79faf2058c95e692d0b2f87fd4496949ff5e027",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/test-istio-version.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/test-istio-version.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/d79faf2058c95e692d0b2f87fd4496949ff5e027",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/test-istio-version.yml"
+    }
+  },
+  {
+    "name": "test-lint-backend.yml",
+    "path": ".github/workflows/test-lint-backend.yml",
+    "sha": "973a4f9846e84370f3593d2ff895bbf8ada79f3b",
+    "size": 1486,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/test-lint-backend.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/test-lint-backend.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/973a4f9846e84370f3593d2ff895bbf8ada79f3b",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/test-lint-backend.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/test-lint-backend.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/973a4f9846e84370f3593d2ff895bbf8ada79f3b",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/test-lint-backend.yml"
+    }
+  },
+  {
+    "name": "version-checker.yml",
+    "path": ".github/workflows/version-checker.yml",
+    "sha": "fa1a58f65d7dd6c84e0ef8a0b80d579f972cbce7",
+    "size": 1192,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/version-checker.yml?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/.github/workflows/version-checker.yml",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/fa1a58f65d7dd6c84e0ef8a0b80d579f972cbce7",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/.github/workflows/version-checker.yml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/.github/workflows/version-checker.yml?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/fa1a58f65d7dd6c84e0ef8a0b80d579f972cbce7",
+      "html": "https://github.com/kiali/kiali/blob/master/.github/workflows/version-checker.yml"
+    }
+  }
+]

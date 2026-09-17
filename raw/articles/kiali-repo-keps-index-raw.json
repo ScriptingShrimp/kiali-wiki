@@ -1,0 +1,168 @@
+---
+source_url: https://api.github.com/repos/kiali/kiali/contents/design/KEPS
+ingested: 2026-09-17
+sha256: 85cf924471c394824fc815a15968c68784869b0c45792c2ccfa872a2349a3493
+note: GitHub API response (list of design/KEPS/ dir)
+---
+[
+  {
+    "name": "ai-store",
+    "path": "design/KEPS/ai-store",
+    "sha": "93542138c0712dccddc3b53841af1d56d5ade66d",
+    "size": 0,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/ai-store?ref=master",
+    "html_url": "https://github.com/kiali/kiali/tree/master/design/KEPS/ai-store",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/trees/93542138c0712dccddc3b53841af1d56d5ade66d",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/ai-store?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/trees/93542138c0712dccddc3b53841af1d56d5ade66d",
+      "html": "https://github.com/kiali/kiali/tree/master/design/KEPS/ai-store"
+    }
+  },
+  {
+    "name": "controller-model",
+    "path": "design/KEPS/controller-model",
+    "sha": "d22a9ddd675159b68c0c16aaf6a2e37409ecb0ae",
+    "size": 0,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/controller-model?ref=master",
+    "html_url": "https://github.com/kiali/kiali/tree/master/design/KEPS/controller-model",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/trees/d22a9ddd675159b68c0c16aaf6a2e37409ecb0ae",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/controller-model?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/trees/d22a9ddd675159b68c0c16aaf6a2e37409ecb0ae",
+      "html": "https://github.com/kiali/kiali/tree/master/design/KEPS/controller-model"
+    }
+  },
+  {
+    "name": "extensions",
+    "path": "design/KEPS/extensions",
+    "sha": "99c2df93f2acf545910dd3bebf9325c1dc585304",
+    "size": 0,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/extensions?ref=master",
+    "html_url": "https://github.com/kiali/kiali/tree/master/design/KEPS/extensions",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/trees/99c2df93f2acf545910dd3bebf9325c1dc585304",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/extensions?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/trees/99c2df93f2acf545910dd3bebf9325c1dc585304",
+      "html": "https://github.com/kiali/kiali/tree/master/design/KEPS/extensions"
+    }
+  },
+  {
+    "name": "graph-cache",
+    "path": "design/KEPS/graph-cache",
+    "sha": "51da1f02b1138980146604efe02badd61340a99b",
+    "size": 0,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/graph-cache?ref=master",
+    "html_url": "https://github.com/kiali/kiali/tree/master/design/KEPS/graph-cache",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/trees/51da1f02b1138980146604efe02badd61340a99b",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/graph-cache?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/trees/51da1f02b1138980146604efe02badd61340a99b",
+      "html": "https://github.com/kiali/kiali/tree/master/design/KEPS/graph-cache"
+    }
+  },
+  {
+    "name": "health-precompute",
+    "path": "design/KEPS/health-precompute",
+    "sha": "49caf934b0bcbeb0f001534f0350560e0acfdeeb",
+    "size": 0,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/health-precompute?ref=master",
+    "html_url": "https://github.com/kiali/kiali/tree/master/design/KEPS/health-precompute",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/trees/49caf934b0bcbeb0f001534f0350560e0acfdeeb",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/health-precompute?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/trees/49caf934b0bcbeb0f001534f0350560e0acfdeeb",
+      "html": "https://github.com/kiali/kiali/tree/master/design/KEPS/health-precompute"
+    }
+  },
+  {
+    "name": "kiali-enhancement-proposal",
+    "path": "design/KEPS/kiali-enhancement-proposal",
+    "sha": "d0164729456cdca3a64bd0a8b33c66c9c78d2471",
+    "size": 0,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/kiali-enhancement-proposal?ref=master",
+    "html_url": "https://github.com/kiali/kiali/tree/master/design/KEPS/kiali-enhancement-proposal",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/trees/d0164729456cdca3a64bd0a8b33c66c9c78d2471",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/kiali-enhancement-proposal?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/trees/d0164729456cdca3a64bd0a8b33c66c9c78d2471",
+      "html": "https://github.com/kiali/kiali/tree/master/design/KEPS/kiali-enhancement-proposal"
+    }
+  },
+  {
+    "name": "metric-rules",
+    "path": "design/KEPS/metric-rules",
+    "sha": "42d0a813e2d1e73930510ee385b4666def4cd188",
+    "size": 0,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/metric-rules?ref=master",
+    "html_url": "https://github.com/kiali/kiali/tree/master/design/KEPS/metric-rules",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/trees/42d0a813e2d1e73930510ee385b4666def4cd188",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/metric-rules?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/trees/42d0a813e2d1e73930510ee385b4666def4cd188",
+      "html": "https://github.com/kiali/kiali/tree/master/design/KEPS/metric-rules"
+    }
+  },
+  {
+    "name": "multi-session-auth",
+    "path": "design/KEPS/multi-session-auth",
+    "sha": "29d35d3c96c2278e7e00c0ea0430b229032767ea",
+    "size": 0,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/multi-session-auth?ref=master",
+    "html_url": "https://github.com/kiali/kiali/tree/master/design/KEPS/multi-session-auth",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/trees/29d35d3c96c2278e7e00c0ea0430b229032767ea",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/multi-session-auth?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/trees/29d35d3c96c2278e7e00c0ea0430b229032767ea",
+      "html": "https://github.com/kiali/kiali/tree/master/design/KEPS/multi-session-auth"
+    }
+  },
+  {
+    "name": "multicluster",
+    "path": "design/KEPS/multicluster",
+    "sha": "822d443ffa95826088b0f03f71c5c8ff25772d3b",
+    "size": 0,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/multicluster?ref=master",
+    "html_url": "https://github.com/kiali/kiali/tree/master/design/KEPS/multicluster",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/trees/822d443ffa95826088b0f03f71c5c8ff25772d3b",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/multicluster?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/trees/822d443ffa95826088b0f03f71c5c8ff25772d3b",
+      "html": "https://github.com/kiali/kiali/tree/master/design/KEPS/multicluster"
+    }
+  },
+  {
+    "name": "namespace-discovery",
+    "path": "design/KEPS/namespace-discovery",
+    "sha": "ee5e1c8b5ce377d9a90f60e9ba7bba3bbbca8dbc",
+    "size": 0,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/namespace-discovery?ref=master",
+    "html_url": "https://github.com/kiali/kiali/tree/master/design/KEPS/namespace-discovery",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/trees/ee5e1c8b5ce377d9a90f60e9ba7bba3bbbca8dbc",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/namespace-discovery?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/trees/ee5e1c8b5ce377d9a90f60e9ba7bba3bbbca8dbc",
+      "html": "https://github.com/kiali/kiali/tree/master/design/KEPS/namespace-discovery"
+    }
+  }
+]

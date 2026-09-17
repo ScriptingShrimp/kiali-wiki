@@ -1,0 +1,24 @@
+---
+source_url: https://api.github.com/repos/kiali/kiali/contents/design/KEPS/kiali-enhancement-proposal
+ingested: 2026-09-17
+sha256: 97702afc155ab7cdf0f6614bb9386c1915bc766e96182152f9dca6e50b6e9060
+note: GitHub API response (list of design/KEPS/kiali-enhancement-proposal/)
+---
+[
+  {
+    "name": "proposal.md",
+    "path": "design/KEPS/kiali-enhancement-proposal/proposal.md",
+    "sha": "673a3cf4c952fe42c591bb22c34bc5b0541da1b5",
+    "size": 3984,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/kiali-enhancement-proposal/proposal.md?ref=master",
+    "html_url": "https://github.com/kiali/kiali/blob/master/design/KEPS/kiali-enhancement-proposal/proposal.md",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/blobs/673a3cf4c952fe42c591bb22c34bc5b0541da1b5",
+    "download_url": "https://raw.githubusercontent.com/kiali/kiali/master/design/KEPS/kiali-enhancement-proposal/proposal.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS/kiali-enhancement-proposal/proposal.md?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/blobs/673a3cf4c952fe42c591bb22c34bc5b0541da1b5",
+      "html": "https://github.com/kiali/kiali/blob/master/design/KEPS/kiali-enhancement-proposal/proposal.md"
+    }
+  }
+]

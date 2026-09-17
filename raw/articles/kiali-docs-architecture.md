@@ -1,0 +1,73 @@
+---
+source_url: https://kiali.io/docs/architecture/architecture/
+ingested: 2026-09-17
+sha256: 3b8776761dda698250591a50e8de1b364bc9784585a75ee6209588e57caa8a82
+---
+
+# Architecture
+
+Overview of the Kiali architecture.
+
+## Kiali architecture
+
+Kiali is composed of two components: a back-end application running in the container application platform, and a user-facing front-end application. Kiali depends on external services and components provided by the container application platform and Istio.
+
+The following diagram illustrates the components involved in Kiali and its interactions:
+
+![Kiali architecture](/images/documentation/architecture/arch.png)
+
+### Kiali back-end
+
+The back-end is the application that runs in the container application platform. It’s written in [Go](http://golang.org/). The code can be found at [kiali/kiali GitHub repository](https://github.com/kiali/kiali).
+
+This is the component that communicates with Istio parts, retrieves and processes data, and exposes this data to the front-end.
+
+The back-end doesn’t need storage. The back-end configuration is managed via the Kiali CR when Kiali is installed via the Kiali operator, or via a configmap when installed via Helm.
+
+### Kiali front-end
+
+The front-end is a single page web application, built using Patternfly, React, Typescript and Redux. The code can be found at [kiali/kiali frontend folder](https://github.com/kiali/kiali/tree/master/frontend).
+
+In a standard deployment, the back-end serves the front-end. Then, the front-end queries the Kiali back-end in order to get data and present it to the user.
+
+There are limited options for personalization, the front-end is mainly stateless. Some data may be persisted, such as session credentials, but this data is stored in the browser and won’t be available in other browsers nor other devices.
+
+## Istio Service Mesh
+
+Kiali is a console for Istio, and as such, Istio is a requirement. It provides and controls the service mesh. Kiali and Istio are installed separately.
+
+Kiali needs to retrieve Istio data and configurations, which are exposed through Prometheus, the Kubernetes API, and istiod. For environments where istiod is inaccessible, Kiali’s communication with istiod [can be disabled](https://kiali.io/docs/configuration/no-istiod/).
+
+## Prometheus
+
+Prometheus is an Istio dependency. When Istio telemetry is enabled, metrics data is stored in Prometheus. Kiali uses the data stored in Prometheus to figure out the mesh topology, show metrics, calculate health, show possible problems, etc.
+
+Kiali communicates directly with Prometheus and assumes the metrics used by Istio Telemetery. It’s a hard dependency for Kiali, and many Kiali features will not work without it.
+
+Currently, Kiali relies on [Istio’s default metrics](https://istio.io/latest/docs/reference/config/metrics/) set. Make sure that these default metrics are always in place. Some metric customization is possible as long as the Kiali requirements are still met. For the current list of required metrics see [this FAQ entry](https://kiali.io/docs/faq/general/).
+
+## Kubernetes API
+
+Kiali uses the API of the container application platform in order to fetch and resolve service mesh configurations.
+
+Container application platforms where Kiali is known to work are [OKD](https://www.okd.io) and [Kubernetes](http://kubernetes.io). Kiali should also work on the derivatives of these platforms.
+
+Kiali queries the Kubernetes API to retrieve, for example, definitions for namespaces, services, deployments, pods, and other entities. Kiali also makes queries to resolve relationships between the different cluster entities.
+
+The Kubernetes API is also queried to retrieve Istio configurations like virtual services, destination rules, route rules, gateways, and quotas.
+
+## Jaeger
+
+Jaeger is optional. When available, Kiali will be able to direct the user to Jaeger’s tracing data. If you need this feature, make sure Kiali is [properly configured for Jaeger integration](https://kiali.io/docs/features/tracing/).
+
+Tracing data will be available only if [Istio’s distributed tracing](https://istio.io/docs/tasks/telemetry/distributed-tracing/) is enabled.
+
+As an alternative, [Grafana Tempo](/docs/configuration/p8s-jaeger-grafana/tracing/tempo) can be used.
+
+## Grafana
+
+Grafana is optional. When available, the metrics pages of Kiali will show a link to direct the user to the same metric in Grafana. If you need this feature, make sure Kiali is [properly configured for Grafana integration](https://github.com/kiali/kiali#grafana).
+
+Kiali has basic metric capabilities. It can show the default Istio metrics for workloads, apps and services. It allows to apply some groupings to the provided metrics and fetch metrics for different time ranges. However, Kiali doesn’t allow to customize the views nor customize the Prometheus queries. If you need these capabilities, you’ll want to install Grafana. Follow the Istio documentation to install Grafana if you need it.
+
+Last modified December 5, 2023: [Update Distributed Tracing docs (#727) (28220ea)](https://github.com/kiali/kiali.io/commit/28220ea51ea1c0570898d5173390fa222e8d5631)

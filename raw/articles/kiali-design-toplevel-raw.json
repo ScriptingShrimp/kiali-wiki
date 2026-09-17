@@ -1,0 +1,24 @@
+---
+source_url: https://api.github.com/repos/kiali/kiali/contents/design
+ingested: 2026-09-17
+sha256: f56a940e232aef7d57f9dc0d17fa6005325ad58a6c3dc8033ae74aa4ba6bb02a
+note: GitHub API response (list of design/ dir)
+---
+[
+  {
+    "name": "KEPS",
+    "path": "design/KEPS",
+    "sha": "c99dfbf369a125ed25b4dfc4959eb56993530e9a",
+    "size": 0,
+    "url": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS?ref=master",
+    "html_url": "https://github.com/kiali/kiali/tree/master/design/KEPS",
+    "git_url": "https://api.github.com/repos/kiali/kiali/git/trees/c99dfbf369a125ed25b4dfc4959eb56993530e9a",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/kiali/kiali/contents/design/KEPS?ref=master",
+      "git": "https://api.github.com/repos/kiali/kiali/git/trees/c99dfbf369a125ed25b4dfc4959eb56993530e9a",
+      "html": "https://github.com/kiali/kiali/tree/master/design/KEPS"
+    }
+  }
+]

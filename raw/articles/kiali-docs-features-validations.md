@@ -1,0 +1,2679 @@
+---
+source_url: https://kiali.io/docs/features/validations
+ingested: 2026-09-17
+sha256: f956366ef3b4f18ba01d90830029c1cec824279ca3394fd3fac8b1dbf368079d
+---
+
+# Validation
+
+A description and complete list of Kiali validations.
+
+Kiali performs a set of validations on your Istio Objects, such as Destination Rules, Service Entries, and Virtual Services. Kiali’s validations go above and beyond what Istio offers. Where Istio offers mainly static checks for well-formed definitions, Kiali performs semantic validations to ensure that the definitions make sense, across objects, and in some cases even across namespaces. Kiali validations are based on the runtime status of your service mesh.
+
+![Istio Config Validation](/images/documentation/features/istio-config-validation.png)
+
+## Disabling validations
+
+In certain environments, particularly those with a high volume of configurations or limited resources, the Istio validation process can be time and resource intensive, potentially causing delays. To prioritize speed and resource efficiency in such scenarios, Kiali offers the option to disable these validations by configuring the validation_reconcile_interval setting to “0s” within the Kiali CR.
+
+Below is an example of a Kiali CR with validations disabled:
+
+
+    spec:
+      external_services:
+        istio:
+          validation_reconcile_interval: "0s"
+
+
+## Ignoring validations
+
+Kiali can ignore validation errors and warnings that are not relevant to your environment. This is useful when a validation is correct in general but does not apply to a specific resource, such as an AuthorizationPolicy that references a CronJob service account only while the job is running.
+
+There are two ways to ignore validations:
+
+### Globally via the Kiali CR
+
+You can ignore one or more validation codes across all resources by configuring `kiali_feature_flags.validations.ignore` in the Kiali CR. See the [Kiali CR reference](/docs/configuration/kialis.kiali.io/#.spec.kiali_feature_flags.validations.ignore) for details.
+
+
+    spec:
+      kiali_feature_flags:
+        validations:
+          ignore: ["KIA0106"]
+
+
+Ignored validations are still logged by Kiali but are not shown in the UI.
+
+### Per object via annotation
+
+You can ignore validations for a single resource by adding the `kiali.io/ignore-validations` annotation to that object. This works on Istio configuration objects, Gateway API resources, services, and workloads.
+
+To ignore all validations for the object, set the annotation with an empty value:
+
+
+    apiVersion: security.istio.io/v1
+    kind: AuthorizationPolicy
+    metadata:
+      name: backup-policy
+      namespace: my-ns
+      annotations:
+        kiali.io/ignore-validations: ""
+
+
+To ignore specific validation codes, provide a comma-separated list of codes:
+
+
+    apiVersion: security.istio.io/v1
+    kind: AuthorizationPolicy
+    metadata:
+      name: backup-policy
+      namespace: my-ns
+      annotations:
+        kiali.io/ignore-validations: "KIA0101,KIA0102"
+
+
+Per-object ignores apply in addition to any globally ignored validation codes configured in the Kiali CR.
+
+The complete list of validations:
+
+## AuthorizationPolicy
+
+### KIA0101 - Namespace not found for this rule
+
+AuthorizationPolicy enables access control on workloads. Each policy effects only to a group of request. For instance, all requests started from a workload on a list of namespaces. The present validation points out those rules referencing a namespace that don’t exist in the cluster.
+
+#### Resolution
+
+Either remove the namespace from the list, correct if there is any typo or create a new namespace.
+
+#### Severity
+
+__Warning
+
+#### Example
+
+
+    apiVersion: security.istio.io/v1beta1
+    kind: AuthorizationPolicy
+    metadata:
+     name: httpbin
+     namespace: default
+    spec:
+     selector:
+       matchLabels:
+         app: httpbin
+         version: v1
+     rules:
+     - from:
+       - source:
+           principals: ["cluster.local/ns/default/sa/sleep"]
+       - source:
+           namespaces:
+             - default
+             - non-existing # warning
+             - unexisting # warning
+       to:
+       - operation:
+           methods: ["GET"]
+           paths: ["/info*"]
+       - operation:
+           methods: ["POST"]
+           paths: ["/data"]
+       when:
+       - key: request.auth.claims[iss]
+         values: ["https://accounts.google.com"]
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/blob/v1.42.0/business/checkers/authorization/namespace_method_checker.go)
+  * [Istio documentation](https://istio.io/docs/reference/config/security/authorization-policy)
+  * [Definition of a source](https://istio.io/docs/reference/config/security/authorization-policy/#Source)
+
+### KIA0102 - Only HTTP methods and fully-qualified gRPC names are allowed
+
+An AuthorizationPolicy has an Operation field where is defined the oprations allowed for a request. In the method field are listed all the allowed methods that request can have. This validation appears when a problem is found in there. The only methods accepted are: either HTTP valid methods or fully-qualified names of gRPC service in the form of “/package.service/method”
+
+#### Resolution
+
+Either change or remove the violating method. It has to be either a HTTP valid method or a fully-qualified names of a gRPC service in the form of “/package.service/method”
+
+#### Severity
+
+__Warning
+
+#### Example
+
+
+    apiVersion: security.istio.io/v1beta1
+    kind: AuthorizationPolicy
+    metadata:
+     name: httpbin
+     namespace: default
+    spec:
+     selector:
+       matchLabels:
+         app: httpbin
+         version: v1
+     rules:
+     - from:
+       - source:
+           principals: ["cluster.local/ns/default/sa/sleep"]
+       - source:
+           namespaces:
+             - default
+       to:
+       - operation:
+           methods:
+             - "GET"
+             - "/package.service/method"
+             - "WRONG" # Warning
+             - "non-fully-qualified-grpc" # Warning
+           paths: ["/info*"]
+       - operation:
+           methods: ["POST"]
+           paths: ["/data"]
+       when:
+       - key: request.auth.claims[iss]
+         values: ["https://accounts.google.com"]
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/blob/v1.25/business/checkers/authorization/service_binding_checker.go)
+  * [Istio documentation](https://istio.io/v1.3/docs/reference/config/authorization/istio.rbac.v1alpha1/#ServiceRoleBinding)
+
+### KIA0104 - This host has no matching entry in the service registry
+
+AuthorizationPolicy enables access control on workloads. Each policy effects only to a group of request going to a specific destination. For instance, allow all the request going to `details` host.
+
+The present validation points out those rules referencing a host that don’t exist in the authorization policy namespace. Kiali considers services, virtual services and service entries. Those hosts that refers to hosts outside of the object namespace will be presented with an unknown error.
+
+#### Resolution
+
+Either remove the host from the list, correct if there is any typo or deploy a new service, service entry or a virtual service pointing to that host.
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    apiVersion: security.istio.io/v1beta1
+    kind: AuthorizationPolicy
+    metadata:
+     name: httpbin
+     namespace: default
+    spec:
+     selector:
+       matchLabels:
+         app: httpbin
+         version: v1
+     rules:
+     - from:
+       - source:
+           principals: ["cluster.local/ns/default/sa/sleep"]
+       - source:
+           namespaces:
+             - default
+       to:
+       - operation:
+           hosts:
+             - wrong # Error
+             - ratings
+             - details.default
+             - reviews.default.svc.cluster.local
+             - productpage.outside # Unknown
+             - google.com # Service Entry present. No error
+             - google.org # Service Entry not present, wrong domain. Error.
+           methods:
+             - "GET"
+             - "/package.service/method"
+           paths: ["/info*"]
+       - operation:
+           methods: ["POST"]
+           paths: ["/data"]
+       when:
+       - key: request.auth.claims[iss]
+         values: ["https://accounts.google.com"]
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/blob/v1.42.0/business/checkers/authorization/no_host_checker.go)
+  * [AuthorizationPolicy documentation](https://istio.io/docs/reference/config/security/authorization-policy)
+  * [Definition of the operations field](https://istio.io/docs/reference/config/security/authorization-policy/#Operation)
+  * [Service association requirement](https://istio.io/docs/ops/deployment/requirements)
+
+### KIA0105 - This field requires mTLS to be enabled
+
+AuthorizationPolicy has a Source field which specifies the source identities of a request. The Source field accepts principals and namespaces which require mTLS be enabled.
+
+A validation Error message on a principals or namespaces fields means that mTLS is not enabled.
+
+This validation appears only when autoMtls is disabled.
+
+#### Resolution
+
+Either remove this field or enable autoMtls.
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    apiVersion: security.istio.io/v1beta1
+    kind: AuthorizationPolicy
+    metadata:
+     name: httpbin
+     namespace: bookinfo
+    spec:
+     selector:
+       matchLabels:
+         app: httpbin
+         version: v1
+     rules:
+     - from:
+       - source:
+           principals: ["cluster.local/ns/default/sa/sleep"]
+       - source:
+           namespaces:
+             - default
+       to:
+       - operation:
+           methods: ["GET"]
+           paths: ["/info*"]
+       - operation:
+           methods: ["POST"]
+           paths: ["/data"]
+       when:
+       - key: request.auth.claims[iss]
+         values: ["https://accounts.google.com"]
+
+
+#### See Also
+
+  * [AuthorizationPolicy documentation](https://istio.io/docs/reference/config/security/authorization-policy)
+  * [Definition of the Source field](https://istio.io/docs/reference/config/security/authorization-policy/#Source)
+  * [Service association requirement](https://istio.io/docs/ops/deployment/requirements)
+  * [Globally enabling Istio mutual TLS](https://istio.io/docs/tasks/security/authn-policy/#globally-enabling-istio-mutual-tls-in-strict-mode)
+
+### KIA0106 - Service Account not found for this principal
+
+AuthorizationPolicy has a Source field which specifies the source identities of a request. The Source field allows principals to be specified - a list of peer identities derived from the peer certificate. A peer identity is in the format of `<TRUST_DOMAIN>/ns/<NAMESPACE>/sa/<SERVICE_ACCOUNT>`, for example, `cluster.local/ns/default/sa/productpage`.
+
+A validation Error message on a principal value means that, while the specified Service Account may exist, it is not referenced by any Pod in the system.
+
+#### Resolution
+
+Correct the principal to refer to an existing Service Account, make sure that the value is in correct format without a typo, and make sure at least one Pod references the Service Account.
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    apiVersion: security.istio.io/v1beta1
+    kind: AuthorizationPolicy
+    metadata:
+     name: httpbin
+     namespace: default
+    spec:
+     selector:
+       matchLabels:
+         app: httpbin
+         version: v1
+     rules:
+     - from:
+       - source:
+           principals: ["cluster.local/ns/default/sa/sleep"]
+       - source:
+           namespaces:
+             - default
+       to:
+       - operation:
+           hosts:
+             - ratings
+             - details.default
+             - reviews.default.svc.cluster.local
+           methods:
+             - "GET"
+           paths: ["/info*"]
+       - operation:
+           methods: ["POST"]
+       when:
+       - key: request.auth.claims[iss]
+         values: ["https://accounts.google.com"]
+
+
+#### See Also
+
+  * [AuthorizationPolicy documentation](https://istio.io/docs/reference/config/security/authorization-policy)
+  * [Definition of the Source field](https://istio.io/docs/reference/config/security/authorization-policy/#Source)
+  * [Service association requirement](https://istio.io/docs/ops/deployment/requirements)
+
+### KIA0107 - Service Account for this principal found on a remote cluster
+
+AuthorizationPolicy has a Source field which specifies the source identities of a request. The Source field allows principals to be specified - a list of peer identities derived from the peer certificate. A peer identity is in the format of `<TRUST_DOMAIN>/ns/<NAMESPACE>/sa/<SERVICE_ACCOUNT>`, for example, `cluster.local/ns/default/sa/productpage`.
+
+An informational message on a principal value means that the specified Service Account was found in a cluster different from that of the AuthorizationPolicy. This is expected in multi-primary setups where workloads across clusters communicate using SPIFFE identities.
+
+#### Resolution
+
+No action required. Kiali detected the Service Account on a remote cluster. Verify that your cross-cluster mTLS and SPIFFE federation is correctly configured.
+
+#### Severity
+
+Informational
+
+#### See Also
+
+  * [AuthorizationPolicy documentation](https://istio.io/docs/reference/config/security/authorization-policy)
+  * [Definition of the Source field](https://istio.io/docs/reference/config/security/authorization-policy/#Source)
+  * [SPIRE Istio Integration](https://istio.io/latest/docs/ops/integrations/spire)
+
+### KIA0108 - Unable to verify principal, trust domain is not known to Kiali
+
+AuthorizationPolicy has a Source field which specifies the source identities of a request. The Source field allows principals to be specified - a list of peer identities derived from the peer certificate. A peer identity is in the format of `<TRUST_DOMAIN>/ns/<NAMESPACE>/sa/<SERVICE_ACCOUNT>`, for example, `cluster.local/ns/default/sa/productpage`.
+
+A validation Warning message on a principal value means that the trust domain in the principal is not known to any cluster that Kiali has access to. This typically happens in multi-primary federation setups where clusters use different trust domains (e.g., `central.example.com`, `north.example.com`) and Kiali does not have visibility into all federated clusters.
+
+Kiali cannot validate whether the referenced Service Account actually exists because it has no access to the cluster owning that trust domain.
+
+#### Resolution
+
+If the trust domain belongs to a federated cluster that Kiali does not manage, this warning can be safely ignored. If the trust domain is a typo, correct the principal value. To suppress this warning, configure Kiali with access to all clusters in the federation, or add the trust domain as a `trustDomainAlias` in the Istio MeshConfig.
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [AuthorizationPolicy documentation](https://istio.io/docs/reference/config/security/authorization-policy)
+  * [Definition of the Source field](https://istio.io/docs/reference/config/security/authorization-policy/#Source)
+  * [Istio Trust Domain Migration](https://istio.io/latest/docs/tasks/security/authorization/authz-td-migration/)
+  * [SPIRE Istio Integration](https://istio.io/latest/docs/ops/integrations/spire)
+
+### KIA0109 - L7 AuthorizationPolicy in Ambient namespace requires waypoint enrollment (istio.io/use-waypoint)
+
+In Ambient Mesh, L7 AuthorizationPolicies (for example policies that use HTTP methods, paths, hosts, request principals, or L7 `when` conditions) are enforced by a waypoint proxy. The Ambient namespace or selected workloads must be enrolled with the `istio.io/use-waypoint` label. Deploying a waypoint without enrollment is not enough for the policy to take effect.
+
+L4-only AuthorizationPolicies (principals, namespaces, ports) are enforced by ztunnel and do not trigger this warning.
+
+#### Resolution
+
+Enroll the namespace or selected workloads with `istio.io/use-waypoint` pointing to a waypoint proxy. See [Ambient L7 Istio config validations](/docs/features/ambient/#ambient-l7-istio-config-validations).
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Use a waypoint proxy](https://istio.io/latest/docs/ambient/usage/waypoint/)
+  * [Policy attachment](https://istio.io/latest/docs/ambient/usage/waypoint/#policy-attachment)
+
+### KIA0110 - L7 AuthorizationPolicy in Ambient requires targetRefs to a Service or Gateway; selector policies are ignored by waypoints
+
+In Ambient Mesh, waypoint proxies ignore selector-based AuthorizationPolicies. L7 policies must attach via `targetRef` or `targetRefs` to a Service or Gateway.
+
+#### Resolution
+
+Add `targetRefs` (or `targetRef`) to a Service or Gateway instead of relying only on a workload selector.
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Policy attachment](https://istio.io/latest/docs/ambient/usage/waypoint/#policy-attachment)
+
+## Destination rules
+
+### KIA0201 - More than one DestinationRules for the same host subset combination
+
+Istio applies traffic rules for services after the routing has happened. These can include different settings such as connection pooling, circuit breakers, load balancing, and detection. Istio can define the same rules for all services under a host or different rules for different versions of the service.
+
+This validation warning could be a result of duplicate definition of the same subsets as well as from rules that apply to all subsets. Also, a combination of one Destination Rule (DR) applying to all subsets and another defining behavior for only some subsets triggers this validation warning.
+
+Istio silently ignores the duplicate subsets and merge these destination rules without letting the user know. Only the first seen rule (by Istio) per subset is used and information from multiple definitions is not merged. While the routing might work correctly, this is most likely a configuration error. It may lead to a undesired behavior if one of the offending rules is removed or modified and that is probably not the intention of the deployer of this service. Also, if the two offending destination rules have different policies for traffic routing the wrong one might be used.
+
+#### Resolution
+
+Either merge the settings to a single DR or split the subsets in such a way that they do not interleave. This ensures that the routing behavior stays consistent.
+
+#### Severity
+
+__Warning
+
+#### Example
+
+
+    apiVersion: networking.istio.io/v1alpha3
+    kind: DestinationRule
+    metadata:
+      name: reviews-dr1
+    spec:
+      host: reviews
+      trafficPolicy:
+        loadBalancer:
+          simple: RANDOM
+      subsets:
+      - name: v1
+        labels:
+          version: v1
+      - name: v2
+        labels:
+          version: v2
+      - name: v3
+        labels:
+          version: v3
+    ---
+    apiVersion: networking.istio.io/v1alpha3
+    kind: DestinationRule
+    metadata:
+      name: reviews-dr2
+    spec:
+      host: reviews
+      trafficPolicy:
+        loadBalancer:
+          simple: RANDOM
+      subsets:
+      - name: v1
+        labels:
+          version: v1
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.42.0/business/checkers/destinationrules/multi_match_checker.go)
+  * [Destination rule documentation](https://istio.io/docs/reference/config/networking/destination-rule)
+  * [Istio source code for merging](https://github.com/istio/istio/blob/0e9cecab053aab744a7c3a731aacb07fd794d5f9/pilot/pkg/model/push_context.go#L879)
+  * [Istio documentation: Split large virtual services and destination rules into multiple resources](https://istio.io/docs/ops/best-practices/traffic-management/#split-virtual-services)
+
+### KIA0202 - This host has no matching entry in the service registry (service, workload or service entries)
+
+Istio applies traffic rules for services after the routing has happened. These can include different settings such as connection pooling, circuit breakers, load balancing, and detection. Istio can define the same rules for all services under a host or different rules for different versions of the service. The host must have a service that is defined in the platform’s service registry or as a ServiceEntry. Short names are extended to include ‘.namespace.cluster’ using the namespace of the destination rule, not the service itself. FQDN is evaluated as is. It is recommended to use the FQDN to prevent any confusion.
+
+If the host is not found, Istio ignores the defined rules.
+
+#### Resolution
+
+Correct the host to point to a correct service, in this namespace or with FQDN to other namespaces, or deploy the missing service to the mesh.
+
+#### Severity
+
+__Error
+
+__There is an exception to the severity level: It will be shown as a Warning when OutboundTrafficPolicy Mode for MeshConfig is set to ALLOW_ANY.
+
+#### Example
+
+
+    apiVersion: networking.istio.io/v1alpha3
+    kind: DestinationRule
+    metadata:
+      name: reviews
+    spec:
+      host: notpresent
+      trafficPolicy:
+        loadBalancer:
+          simple: RANDOM
+      subsets:
+      - name: v1
+        labels:
+          version: v1
+      - name: v2
+        labels:
+          version: v2
+      - name: v3
+        labels:
+          version: v3
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.42.0/business/checkers/destinationrules/no_dest_checker.go)
+  * [Destination rule documentation](https://istio.io/docs/reference/config/networking/destination-rule)
+
+### KIA0203 - This subset’s labels are not found in any matching host
+
+Istio applies traffic rules for services after the routing has happened. These can include different settings such as connection pooling, circuit breakers, load balancing, and detection. Istio can define the same rules for all services under a host or different rules for different versions of the service. The host must a service that is defined in the platform’s service registry or as a ServiceEntry. Short names are extended to include ‘.namespace.cluster’ using the namespace of the destination rule, not the service itself. FQDN is evaluated as is. It is recommended to use the FQDN to prevent any confusion.
+
+Subsets can override the global settings defined in the DR for a host.
+
+If the host is not found, Istio ignores the defined rules.
+
+If the not found subset is not referenced in any Virtual Service, the severity of this error is changed to Info.
+
+#### Resolution
+
+Correct the host to point to a correct service, in this namespace or with FQDN to other namespaces, or deploy the missing service to the mesh. If the hostname is equal to the one used otherwise in the DR, consider removing the duplicate host resolution.
+
+Also, verify that the labels are correctly matching a workload with the intended service.
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    apiVersion: networking.istio.io/v1alpha3
+    kind: DestinationRule
+    metadata:
+      name: reviews
+    spec:
+      host: reviews
+      trafficPolicy:
+        loadBalancer:
+          simple: RANDOM
+      subsets:
+      - name: v1
+        labels:
+          version: v10
+      - name: v2
+        labels:
+          notfoundlabel: v2
+      - name: v3
+        labels:
+          version: v3
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.42.0/business/checkers/destinationrules/no_dest_checker.go)
+  * [Destination rule documentation](https://istio.io/docs/reference/config/networking/destination-rule)
+
+### KIA0204 - mTLS settings of a non-local Destination Rule are overridden
+
+Istio allows you to define DestinationRule at three different levels: mesh, namespace and service level. A mesh may have multiple DRs. In case of having two DestinationRules on the first one is at a lower level than the second one, the first one overrides the TLS values of the second one.
+
+#### Resolution
+
+This validation aims to warn Kiali users that they may be disabling/enabling mTLS from the higher DestinationRule. Merging the TLS settings to one of the DestinationRules is the only way to fix this validation. However, this is a valid scenario so it might be impossible to remove this warning.
+
+#### Severity
+
+__Warning
+
+#### Example
+
+
+    apiVersion: "networking.istio.io/v1alpha3"
+    kind: "DestinationRule"
+    metadata:
+      name: "default"
+      namespace: "istio-system"
+    spec:
+      host: "*.local"
+      trafficPolicy:
+        tls:
+          mode: ISTIO_MUTUAL
+    ---
+    apiVersion: networking.istio.io/v1alpha3
+    kind: DestinationRule
+    metadata:
+      name: reviews
+    spec:
+      host: reviews
+      trafficPolicy:
+        loadBalancer:
+          simple: RANDOM
+      subsets:
+      - name: v1
+        labels:
+          version: v1
+      - name: v2
+        labels:
+          version: v2
+      - name: v3
+        labels:
+          version: v3
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.42.0/business/checkers/destinationrules/traffic_policy_checker.go)
+
+### KIA0205 - PeerAuthentication enabling mTLS at mesh level is missing
+
+Istio has the ability to define mTLS communications at mesh level. In order to do that, Istio needs one DestinationRule and one PeerAuthentication. The DestinationRule configures all the clients of the mesh to use mTLS protocol on their connections. The PeerAuthentication defines what authentication methods that can be accepted on the workload of the whole mesh. If the PeerAuthentication is not found or doesn’t exist and the mesh-wide DestinationRule is on ISTIO_MUTUAL mode, all the communication returns 500 errors.
+
+#### Resolution
+
+Add a PeerAuthentication within the `istio-system` namespace without specifying targets but setting peers mtls mode to STRICT or PERMISSIVE. The PeerAuthentication should be like [this](/files/validation_examples/401.yaml).
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    # AutoMtls disabled, no PeerAuthentication at mesh-level defined
+    apiVersion: "networking.istio.io/v1alpha3"
+    kind: "DestinationRule"
+    metadata:
+      name: "default"
+      namespace: "istio-system"
+    spec:
+      host: "*.local"
+      trafficPolicy:
+        tls:
+          mode: ISTIO_MUTUAL
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.42.0/business/checkers/destinationrules/meshwide_mtls_checker.go)
+  * [Globally enabling Istio mutual TLS](https://istio.io/docs/tasks/security/authn-policy/#globally-enabling-istio-mutual-tls-in-strict-mode)
+
+### KIA0206 - PeerAuthentication enabling namespace-wide mTLS is missing
+
+Istio has the ability to define mTLS communications at namespace level. In order to do that, Istio needs both a DestinationRule and a PeerAuthentication targeting all the clients/workloads of the specific namespace. The PeerAuthentication allows mTLS authentication method for all the workloads within a namespace. The DestinationRule defines all the clients within the namespace to start communications in mTLS mode. If the PeerAuthentication is not found and the DestinationRule is on STRICT mode in that namespace but there is the DestinationRule enabling mTLS, all the communications within that namespace returns 500 errors.
+
+#### Resolution
+
+A PeerAuthentication enabling mTLS method is needed for the workloads in the namespace. Otherwise all the clients start mTLS connections that those workloads won’t be ready to manage. Add a PeerAuthentication without specifying targets but setting mTLS mode to STRICT or PERMISSIVE in the same namespace as the DestinationRule.
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    apiVersion: "networking.istio.io/v1alpha3"
+    kind: "DestinationRule"
+    metadata:
+      name: "enable-mtls"
+      namespace: "bookinfo"
+    spec:
+      host: "*.bookinfo.svc.cluster.local"
+      trafficPolicy:
+        tls:
+          mode: ISTIO_MUTUAL
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/blob/v1.42.0/business/checkers/destinationrules/namespacewide_mtls_checker.go)
+  * [Enabling Istio mutual TLS per namespace](https://istio.io/docs/tasks/security/authn-policy/#enable-mutual-tls-per-namespace-or-workload)
+
+### KIA0207 - PeerAuthentication with TLS strict mode found, it should be permissive
+
+Istio needs both a DestinationRule and PeerAuthentication to enable mTLS communications. The PeerAuthentication configures the authentication method accepted for all the targeted workloads. The DestinationRule defines which is the authentication method that the clients of specific workloads has to start communications with.
+
+#### Resolution
+
+Kiali has found that there is a DestinationRule sending traffic without mTLS authentication method. There are two different ways to fix this situation. You can either change the PeerAuthentication applying to PERMISSIVE mode or change the DestinationRule to start communications using mTLS.
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    apiVersion: "networking.istio.io/v1alpha3"
+    kind: "DestinationRule"
+    metadata:
+      name: "disable-mtls"
+      namespace: "bookinfo"
+    spec:
+      host: "*.bookinfo.svc.cluster.local"
+      trafficPolicy:
+        tls:
+          mode: DISABLE
+    ---
+    apiVersion: "networking.istio.io/v1alpha3"
+    kind: "DestinationRule"
+    metadata:
+      name: "enable-mtls"
+      namespace: "bookinfo"
+    spec:
+      host: "*.bookinfo.svc.cluster.local"
+      trafficPolicy:
+        tls:
+          mode: ISTIO_MUTUAL
+    ---
+    apiVersion: "security.istio.io/v1beta1"
+    kind: "PeerAuthentication"
+    metadata:
+      name: "default"
+      namespace: "bookinfo"
+    spec:
+      mtls:
+        mode: STRICT
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.42.0/business/checkers/destinationrules/disabled_namespacewide_mtls_checker.go)
+  * [Enabling Istio mutual TLS per namespace](https://istio.io/docs/tasks/security/authentication/authn-policy/#enable-mutual-tls-per-namespace-or-workload)
+
+### KIA0208 - PeerAuthentication enabling mTLS found, permissive mode needed
+
+Istio needs both a DestinationRule and PeerAuthentication to enable mTLS communications. The PeerAuthentication configures the authentication method accepted for all the targeted workloads. The DestinationRule defines which is the authentication method that the clients of specific workloads has to start communications with.
+
+Kiali found a DestinationRule starting communications without TLS but there was a PeerAuthentication allowing all services in the mesh to accept _only_ requests in mTLS.
+
+#### Resolution
+
+There are two ways to fix this situation. You can either change the PeerAuthentication to enable PERMISSIVE mode to all the workloads in the mesh or change the DestinatonRule to enable mTLS instead of disabling it (change the mode to ISTIO_MUTUAL).
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    apiVersion: "networking.istio.io/v1alpha3"
+    kind: "DestinationRule"
+    metadata:
+      name: "default"
+      namespace: "bookinfo"
+    spec:
+      host: "*.bookinfo.svc.cluster.local"
+      trafficPolicy:
+        tls:
+          mode: DISABLE
+    ---
+    apiVersion: "security.istio.io/v1beta1"
+    kind: "PeerAuthentication"
+    metadata:
+      name: "default"
+      namespace: "istio-system"
+    spec:
+      mtls:
+        mode: STRICT
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.42.0/business/checkers/destinationrules/disabled_namespacewide_mtls_checker.go)
+  * [Globally enabling Istio mutual TLS](https://istio.io/docs/tasks/security/authentication/authn-policy/#globally-enabling-istio-mutual-tls-in-strict-mode)
+
+### KIA0209 - DestinationRule Subset has not labels
+
+A DestinationRule subset without labels may miss the destination endpoint linked with a specific workload.
+
+If there is any other subset with valid labels, the severity of this warning is changed to Info.
+
+#### Resolution
+
+Validate that a subset is properly configured.
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [DestinationRule Subset](https://istio.io/latest/docs/reference/config/networking/destination-rule)
+
+### KIA0210 - L7 DestinationRule features in Ambient namespace require waypoint enrollment (istio.io/use-waypoint)
+
+DestinationRules that use L7 features (HTTP connection pool settings, HTTP-based consistent hashing, or outlier detection) require a waypoint in Ambient Mesh. When Kiali cannot resolve the destination service, it falls back to checking whether the CR’s Ambient namespace is enrolled with `istio.io/use-waypoint`.
+
+L4-only DestinationRules (for example TLS settings only) do not trigger this warning.
+
+#### Resolution
+
+Enroll the Ambient namespace or destination service with `istio.io/use-waypoint`. See [Ambient L7 Istio config validations](/docs/features/ambient/#ambient-l7-istio-config-validations).
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Use a waypoint proxy](https://istio.io/latest/docs/ambient/usage/waypoint/)
+
+### KIA0211 - L7 DestinationRule targets a service not enrolled to use a waypoint (istio.io/use-waypoint)
+
+An L7 DestinationRule targets an Ambient service that is not enrolled for a waypoint (missing `istio.io/use-waypoint`, or set to `none`). Without enrollment, L7 traffic policy settings will not take effect for that service.
+
+#### Resolution
+
+Label the destination service or its namespace with `istio.io/use-waypoint`, or remove the L7 DestinationRule features if they are not needed.
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Use a waypoint proxy](https://istio.io/latest/docs/ambient/usage/waypoint/)
+
+### KIA0212 - L7 DestinationRule should be in the same namespace as the Ambient destination service to take effect
+
+In Ambient Mesh, L7 DestinationRules that target a service in another namespace typically do not take effect for that Ambient destination. The DestinationRule should live in the same namespace as the destination service.
+
+#### Resolution
+
+Move the DestinationRule into the destination service namespace, or redefine the host so the CR and Ambient service are co-located.
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Use a waypoint proxy](https://istio.io/latest/docs/ambient/usage/waypoint/)
+
+### K8s Gateway API
+
+Note that with the support of K8s Gateway API, a new mechanism of subsetting is introduced. Which means, that each version of a service should have a separate Service pointing to that particular version. And instead of the usage of DestinationRules, there should be a K8s HTTPRoute object created, referencing to Services per version in it’s rules.
+
+#### See Also
+
+  * [K8s HTTP Routing](https://gateway-api.sigs.k8s.io/guides/http-routing)
+  * [Istio Mesh K8s Gateway Traffic](https://istio.io/latest/docs/tasks/traffic-management/ingress/gateway-api/#mesh-traffic)
+  * [K8s HTTPRoute Validations in Kiali](https://kiali.io/docs/features/validations/#httproutes)
+
+## Gateways
+
+### KIA0301 - More than one Gateway for the same host port combination
+
+Gateway creates a proxy that forwards the inbound traffic for the exposed ports. If two different gateways expose the same ports for the same host, this creates ambiguity inside Istio as either of these gateways could handle the traffic. This is most likely a configuration error. This check is done across all namespaces the user has access to.
+
+There is one exception: when both gateways points to a different ingress. Then the ambiguity doesn’t exist and, in consequence, no validation is shown. Kiali considers that two gateways points to the same ingress if they share the exact same selector.
+
+#### Resolution
+
+Remove the duplicate gateway entries or merge the two gateway definitions into a single one.
+
+OR
+
+When one of the duplicate Gateways has a wildcard in hosts, there is an option ‘skip_wildcard_gateway_hosts’ in Kiali CR, by setting it to ’true’, it will ignore Gateways with wildcards in hosts during validation. As Istio considers such a Gateway with a wildcard in hosts as the last in order, after the Gateways with FQDN in hosts.
+
+#### Severity
+
+__Warning
+
+#### Example
+
+
+    apiVersion: networking.istio.io/v1alpha3
+    kind: Gateway
+    metadata:
+      name: bookinfo-gateway # Validation shown
+      namespace: bookinfo
+    spec:
+      selector:
+        istio: ingressgateway # use istio default controller
+      servers:
+      - port:
+          number: 80
+          name: http
+          protocol: HTTP
+        hosts:
+        - "*"
+    ---
+    apiVersion: networking.istio.io/v1alpha3
+    kind: Gateway
+    metadata:
+      name: bookinfo-gateway-copy # Validation shown
+      namespace: bookinfo2
+    spec:
+      selector:
+        istio: ingressgateway # use istio default controller
+      servers:
+      - port:
+          number: 80
+          name: http
+          protocol: HTTP
+        hosts:
+        - "*"
+    ---
+    apiVersion: networking.istio.io/v1alpha3
+    kind: Gateway
+    metadata:
+      name: bookinfo-gateway-diff-ingress # No validations shown
+      namespace: bookinfo
+    spec:
+      selector:
+        istio: ingressgateway-pub # Using different ingress
+      servers:
+      - port:
+          number: 80
+          name: http
+          protocol: HTTP
+        hosts:
+        - "*"
+    ---
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.42.0/business/checkers/gateways/multi_match_checker.go)
+  * [Istio Gateway documentation](https://istio.io/docs/reference/config/networking/gateway/)
+
+### KIA0302 - No matching workload found for gateway selector in this namespace
+
+This validation checks the current namespace for matching workloads as this is recommended, and potentially in the future required, by the Istio. Excluded from this check are the default “istio-ingressgateway” and “istio-egressgateway” workloads which are included in Istio by default.
+
+Although your traffic might be correctly routed to a workload in other namespace, this is not a guaranteed behavior and thus a warning is flagged in such cases also.
+
+#### Resolution
+
+Deploy the missing workload or fix the selector to target a correct location.
+
+#### Severity
+
+__Warning
+
+#### Example
+
+
+    apiVersion: networking.istio.io/v1alpha3
+    kind: Gateway
+    metadata:
+      name: bookinfo-gateway
+      namespace: bookinfo
+    spec:
+      selector:
+        app: nonexisting # workload doesn't exist in the namespace
+      servers:
+      - port:
+          number: 80
+          name: http
+          protocol: HTTP
+        hosts:
+        - "*"
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/blob/v1.42.0/business/checkers/gateways/selector_checker.go)
+  * [Istio documentation for gateways](https://istio.io/docs/reference/config/networking/v1alpha3/gateway/#Gateway)
+
+## Mesh Policies
+
+### KIA0401 - Mesh-wide Destination Rule enabling mTLS is missing
+
+Istio has the ability to define mTLS communications at mesh level. In order to do that, Istio needs one DestinationRule and one PeerAuthentication. The DestinationRule configures all the clients of the mesh to use mTLS protocol on their connections. The PeerAuthentication defines what authentication methods can be accepted on the workload of the whole mesh. If the DestinationRule is not found or doesn’t exist and the PeerAuthentication is on STRICT mode, all the communication returns 500 errors.
+
+#### Resolution
+
+Add a DestinationRule with “*.cluster” host and ISTIO_MUTUAL as tls trafficPolicy mode. The DestinationRule should be like [this](/files/validation_examples/004.yaml).
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    # Make sure there isn't any DestinationRule enabling meshwide mTLS
+    apiVersion: "security.istio.io/v1beta1"
+    kind: "PeerAuthentication"
+    metadata:
+      name: "default"
+      namespace: "istio-system"
+    spec:
+      mtls:
+        mode: STRICT
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.17/business/checkers/meshpolicies/mesh_mtls_checker.go)
+  * [Globally enabling Istio mutual TLS](https://istio.io/docs/tasks/security/authn-policy/#globally-enabling-istio-mutual-tls-in-strict-mode)
+
+## PeerAuthentication
+
+### KIA0501 - Destination Rule enabling namespace-wide mTLS is missing
+
+Istio has the ability to define mTLS communications at namespace level. In order to do that, Istio needs one DestinationRule and one PeerAuthentication. The DestinationRule configures all the clients of the namespace to use mTLS protocol on their connections. The PeerAuthentication defines what authentication methods can be accepted on a specific group of workloads. PeerAuthentications without target field specified will target all the workloads within its namespace. If the DestinationRule is not found or doesn’t exist in the namespace and the namespace-wide PeerAuthentication is on STRICT mode, all the communication will return 500 errors.
+
+#### Resolution
+
+Add a DestinationRule with “*.namespace.svc.cluster.local” host and ISTIO_MUTUAL as tls trafficPolicy mode. The DestinationRule should be like [this](/files/validation_examples/006.yaml).
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    # Make sure there isn't any DestinationRule enabling meshwide mTLS
+    apiVersion: "security.istio.io/v1beta1"
+    kind: "PeerAuthentication"
+    metadata:
+      name: "default"
+      namespace: "bookinfo"
+    spec:
+      mtls:
+        mode: STRICT
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.17/business/checkers/policies/namespace_mtls_checker.go)
+  * [Enabling Istio mutual TLS namespace-wide](https://istio.io/docs/tasks/security/authentication/authn-policy/#enable-mutual-tls-per-namespace-or-workload)
+
+### KIA0505 - Destination Rule disabling namespace-wide mTLS is missing
+
+PeerAuthentication objects are used to define the authentication methods that a set of workloads can accept: Mutual, Istio Mutual, Simple or Disabled.
+
+This validation warns the scenario where there is one PeerAuthentication at namespace level with `DISABLE` mode but there is DestinationRule at namespace or mesh level enabling mTLS. With this scenario, all the traffic flowing between the services in that namespace will fail.
+
+#### Resolution
+
+You can either change the namespace/mesh-wide Destination Rule to `DISABLE` mode or change the current PeerAuthentication to allow mTLS (mode `STRICT` or `PERMISSIVE`).
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    apiVersion: "security.istio.io/v1beta1"
+    kind: "PeerAuthentication"
+    metadata:
+      name: "default"
+      namespace: "bookinfo"
+    spec:
+      mtls:
+        mode: DISABLE
+    ---
+    apiVersion: "networking.istio.io/v1alpha3"
+    kind: "DestinationRule"
+    metadata:
+      name: "enable-mtls"
+      namespace: bookinfo
+    spec:
+      host: "*.bookinfo.svc.cluster.local"
+      trafficPolicy:
+        tls:
+          mode: ISTIO_MUTUAL
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/blob/v1.42.0/business/checkers/peerauthentications/disabled_namespacewide_checker.go)
+  * [PeerAuthentication reference](https://istio.io/docs/reference/config/security/peer_authentication)
+
+### KIA0506 - Destination Rule disabling mesh-wide mTLS is missing
+
+PeerAuthentication objects are used to define the authentication methods that a set of workloads can accept: Mutual, Istio Mutual, Simple or Disabled.
+
+This validation warns the scenario where there is one PeerAuthentication at mesh level with `DISABLE` mode but there is DestinationRule at mesh level enabling mTLS. With this scenario, all the traffic flowing between the services in that namespace will fail.
+
+#### Resolution
+
+You can either change the mesh-wide Destination Rule to `DISABLE` mode or change the current PeerAuthentication to allow mTLS (mode `STRICT` or `PERMISSIVE`).
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    apiVersion: "security.istio.io/v1beta1"
+    kind: "PeerAuthentication"
+    metadata:
+      name: "default"
+      namespace: "istio-system"
+    spec:
+      mtls:
+        mode: DISABLE
+    ---
+    apiVersion: "networking.istio.io/v1alpha3"
+    kind: "DestinationRule"
+    metadata:
+      name: "enable-mtls"
+      namespace: bookinfo
+    spec:
+      host: "*.local"
+      trafficPolicy:
+        tls:
+          mode: ISTIO_MUTUAL
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/blob/v1.42.0/business/checkers/peerauthentications/disabled_meshwide_checker.go)
+  * [PeerAuthentication reference](https://istio.io/docs/reference/config/security/peer_authentication)
+
+## Ports
+
+### KIA0601 - Port name must follow [-suffix] form
+
+Istio requires the service ports to follow the naming form of ‘protocol-suffix’ where the ‘-suffix’ part is optional. If the naming does not match this form (or is undefined), Istio treats all the traffic TCP instead of the defined protocol in the definition. Dash is a required character between protocol and suffix. For example, ‘http2foo’ is not valid, while ‘http2-foo’ is (for http2 protocol).
+
+#### Resolution
+
+Rename the service port name field to follow the form and the traffic flows correctly.
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: ratings-java-svc
+      namespace: bookinfo
+      labels:
+        app: ratings
+        service: ratings-svc
+    spec:
+      ports:
+      - port: 9080
+        name: wrong-http
+      selector:
+        app: ratings-java
+        version: v1
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/blob/v1.42.0/business/checkers/services/port_mapping_checker.go)
+  * [Istio documentation port naming convention](https://istio.io/docs/ops/deployment/requirements)
+
+### KIA0602 - Port appProtocol must follow  form
+
+Istio also optionally supports the appProtocol in service ports, following the form of ‘protocol’. When port name field does not contain the protocol the appProtocol field is considered as a protocol. If the naming does not match this form, Istio treats all the traffic TCP instead of the defined protocol in the definition.
+
+#### Resolution
+
+Rename the service port appProtocol field to follow the form and the traffic flows correctly.
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: ratings-java-svc
+      namespace: bookinfo
+      labels:
+        app: ratings
+        service: ratings-svc
+    spec:
+      ports:
+      - port: 3306
+        name: database
+        appProtocol: wrong-mysql
+      selector:
+        app: ratings-java
+        version: v1
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/blob/v1.42.0/business/checkers/services/port_mapping_checker.go)
+  * [Istio documentation protocol selection](https://istio.io/latest/docs/ops/configuration/traffic-management/protocol-selection)
+
+## Services
+
+### KIA0701 - Deployment exposing same port as Service not found
+
+Service definition has a combination of labels and port definitions that are not matching to any workloads. This means the deployment will be unsuccessful and no traffic can flow between these two resources. The port is read from the Service ‘TargetPort’ definition first and if undefined, the ‘Port’ field is used as Kubernetes defaults the ‘TargetPort’ to ‘Port’. If the ‘TargetPort’ is using a integer, the port numbers are compared and if the ‘TargetPort’ is a string, the deployment’s portName is used for comparison.
+
+#### Resolution
+
+Fix the port definitions in the workload or in the service definition to ensure they match.
+
+#### Severity
+
+__Warning
+
+#### Example
+
+Invalid example with port definitions unmatched:
+
+
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: ratings-java-svc
+      namespace: ratings-java
+      labels:
+        app: ratings
+        service: ratings-svc
+    spec:
+      ports:
+      - port: 9080
+        name: http
+      selector:
+        app: ratings-java
+        version: v1
+    ---
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    metadata:
+      name: ratings-java
+      namespace: ratings-java
+      labels:
+        app: ratings-java
+        version: v1
+    spec:
+      replicas: 1
+      template:
+        metadata:
+          annotations:
+             sidecar.istio.io/inject: "true"
+          labels:
+            app: ratings-java
+            version: v1
+        spec:
+          containers:
+          - name: ratings-java
+            image: pilhuhn/ratings-java:f
+            imagePullPolicy: IfNotPresent
+            ports:
+            - containerPort: 8080
+
+
+Valid example using targetPort definition matching:
+
+
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: ratings-java-svc
+      namespace: ratings-java
+      labels:
+        app: ratings
+        service: ratings-svc
+    spec:
+      ports:
+      - port: 9080
+        targetPort: 8080
+        name: http
+      selector:
+        app: ratings-java
+        version: v1
+    ---
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    metadata:
+      name: ratings-java
+      namespace: ratings-java
+      labels:
+        app: ratings-java
+        version: v1
+    spec:
+      replicas: 1
+      template:
+        metadata:
+          annotations:
+             sidecar.istio.io/inject: "true"
+          labels:
+            app: ratings-java
+            version: v1
+        spec:
+          containers:
+          - name: ratings-java
+            image: pilhuhn/ratings-java:f
+            imagePullPolicy: IfNotPresent
+            ports:
+            - containerPort: 8080
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/blob/v1.42.0/business/checkers/services/port_mapping_checker.go)
+  * [Kubernetes services](https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service)
+
+## Sidecars
+
+### KIA1004 - This host has no matching entry in the service registry
+
+The Sidecar resources are used for configuring the sidecar proxies in the service mesh. IstioEgressListener specifies the properties of an outbound traffic listener on the sidecar proxy attached to a workload instance.
+
+In the hosts field, there is the list of hosts exposed to the workload. Each host in the list have the `namespace/dnsName` format where both namespace and dnsName may have non-obvious values. `namespace` may be either `.`, `~`, `*` or an actual namespace name. `dnsName` has to be a FQDN representing a service, virtual service or a service entry. This FQDN may use the wildcard character.
+
+See more information about the syntax of both `namespace` and `dnsName` into [istio documentation](https://istio.io/docs/reference/config/networking/sidecar/#IstioEgressListener).
+
+#### Resolution
+
+Make sure there is a service, virtual service or service entry matching with the host.
+
+#### Severity
+
+__Warning
+
+#### Example
+
+
+    apiVersion: networking.istio.io/v1alpha3
+    kind: Sidecar
+    metadata:
+      name: servicenotfound
+      namespace: bookinfo
+    spec:
+      workloadSelector:
+        labels:
+          app: reviews
+      egress:
+      - port:
+          number: 3306
+          protocol: MYSQL
+          name: egressmysql
+        captureMode: NONE
+        bind: 127.0.0.1
+        hosts:
+        - "bookinfo/*.bookinfo.svc.cluster.local" # Bookinfo running into bookinfo ns
+        - "default/kiali.io" # Service entry present in the namespace
+        - "bookinfo/bogus.bookinfo.svc.cluster.local" # Bogus service into bookinfo doesn't exist
+        - "bogus-ns/reviews.bookinfo.svc.cluster.local" # Cross-namespace validation: unable to verify validity
+
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.42.0/business/checkers/sidecars/egress_listener_checker.go)
+  * [Sidecar EgressListener documentation](https://istio.io/docs/reference/config/networking/sidecar/#IstioEgressListener)
+
+### KIA1006 - Global default sidecar should not have workloadSelector
+
+The Sidecar resources are used for configuring the sidecar proxies in the service mesh. By default, all the sidecars are configured with the default sidecar instance specified in the control plane namespace (usually istio-system). In case there are sidecar resources in the namespaces where your applications are, this default sidecar resource won’t be considered. The sidecar in your namespace will be applied.
+
+Having `workloadSelector` in your global default sidecar won’t make any effect in the other sidecars living outside of the control plane namespace.
+
+#### Resolution
+
+Make sure you don’t have the `workloadSelector` in this global sidecar resource. In case you need specific settings for specific workloads, move those settings to the sidecar resources in your application namespaces.
+
+#### Severity
+
+__Warning
+
+#### Example
+
+
+    apiVersion: networking.istio.io/v1alpha3
+    kind: Sidecar
+    metadata:
+      name: default
+      namespace: istio-system
+    spec:
+      workloadSelector: # Default sidecar can't have labels
+        labels:
+          version: v1
+      egress:
+      - port:
+          number: 3306
+          protocol: MYSQL
+          name: egressmysql
+        captureMode: NONE
+        bind: 127.0.0.1
+        hosts:
+        - "bookinfo/reviews.bookinfo.svc.cluster.local"
+        - "bookinfo/details.bookinfo.svc.cluster.local"
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.42.0/business/checkers/sidecars/global_checker.go)
+  * [Sidecar documentation: second warning](https://istio.io/docs/reference/config/networking/sidecar)
+
+### KIA1007 - OutboundTrafficPolicy shown with empty mode value is ambiguous
+
+Due to issues with the Istio client and the protobuf library it uses, the way some defaults are handled becomes ambiguous. When a Sidecar resource `spec.outboundTrafficPolicy.mode` is left unset or is explicitly set to REGISTRY_ONLY, the Kiali UI will show the value as unset (e.g. if nothing is set inside `outboundTrafficPolicy`, its value will be shown as `{}`). In this case, you are not guaranteed to know what the value of `mode` truly is. So in the case where Kiali UI shows `mode` as empty, you cannot know if Istio will be using a value of REGISTRY_ONLY or ALLOW_ANY.
+
+#### Resolution
+
+You cannot determine the value of `mode` using the Kiali UI when this condition arises. You must inspect the Sidecar object using other means to determine the value (e.g. use `kubectl get sidecar your-side-car-name -o jsonpath='{.spec.outboundTrafficPolicy.mode}'`).
+
+#### Severity
+
+Informational
+
+#### Example
+
+Both of these Sidecar resources will show `mode` as unset/empty in the Kiali UI YAML editor:
+
+
+    apiVersion: networking.istio.io/v1beta1
+    kind: Sidecar
+    ...
+    spec:
+      outboundTrafficPolicy:
+        mode: REGISTRY_ONLY
+
+
+
+    apiVersion: networking.istio.io/v1beta1
+    kind: Sidecar
+    ...
+    spec:
+      # according to Istio documentation, the default will be ALLOW_ANY
+      outboundTrafficPolicy: {}
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.65.0/business/checkers/sidecars/outbound_traffic_policy_mode.go)
+  * [Additional details](https://github.com/kiali/kiali/issues/5882)
+
+## VirtualServices
+
+### KIA1101 - DestinationWeight on route doesn’t have a valid service (host not found)
+
+VirtualService routes matching requests to a service inside your mesh. Routing can also match a subset of traffic to a certain version of it for example. Any service inside the mesh must be targeted by its name, the IP address are only allowed for hosts defined through a Gateway. Host must be in a short name or FQDN format. Short name will evaluate to VS’ namespace, regardless of where the actual service might be placed.
+
+If the host is not found, Istio ignores the defined rules. However, if a subset with a Destination Rule is not found it affects all the subsets and all the routings. As such, care must be taken that the Destination rule is available before deploying the Virtual Service.
+
+#### Resolution
+
+Correct the host to point to a correct service (in this namespace or with FQDN to other namespaces), deploy the missing service to the mesh or remove the configuration linking to that non-existing service.
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    apiVersion: networking.istio.io/v1alpha3
+    kind: VirtualService
+    metadata:
+      name: details
+    spec:
+      hosts:
+      - details
+      http:
+      - route:
+        - destination:
+            host: nonexistentsvc
+            subset: v2
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.42.0/business/checkers/virtualservices/no_host_checker.go)
+  * [Destination rule documentation](https://istio.io/docs/reference/config/networking/destination-rule)
+
+### KIA1102 - VirtualService is pointing to a non-existent gateway
+
+By default, VirtualService routes apply to sidecars inside the mesh. The gateway field allows to override that default and if anything is defined, the VS applies to those selected. ‘mesh’ is a reserved gateway name and means all the sidecars in the mesh. If one wishes to apply the VS to gateways as well as the sidecars, the ‘mesh’ keyword must be used as one of the gateways. Incorrect gateways mean that the VS is not applied correctly.
+
+#### Resolution
+
+Fix the possible gateway field to target all necessary gateways or remove the field if the default ‘mesh’ is enough.
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    apiVersion: networking.istio.io/v1alpha3
+    kind: VirtualService
+    metadata:
+      name: details
+    spec:
+      hosts:
+      - details
+      gateways:
+      - non-existent-gateway
+      http:
+      - route:
+        - destination:
+            host: details
+            subset: v1
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.42.0/business/checkers/virtualservices/no_gateway_checker.go)
+
+### KIA1104 - The weight is assumed to be 100 because there is only one route destination
+
+Istio assumes the weight to be 100 when there is only one [HTTPRouteDestination](https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRouteDestination) or [RouteDestination](https://istio.io/docs/reference/config/networking/virtual-service/#RouteDestination). The warning is present because there is one route with a weight less than 100.
+
+#### Resolution
+
+Either remove the weight field or you might want to add another RouteDestination with an specific weight.
+
+#### Severity
+
+__Warning
+
+#### Example
+
+
+    apiVersion: networking.istio.io/v1alpha3
+    kind: VirtualService
+    metadata:
+      name: reviews
+    spec:
+      hosts:
+        - reviews
+      http:
+      - route:
+        - destination:
+            host: reviews
+            subset: v1
+          weight: 10
+
+
+#### See Also
+
+  * [Istio documentation about HTTP Route Destination struct](https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRouteDestination)
+  * [Istio documentation about Route Destination struct](https://istio.io/docs/reference/config/networking/virtual-service/#RouteDestination)
+  * [Validator source code](https://github.com/kiali/kiali/blob/v1.42.0/business/checkers/virtualservices/route_checker.go)
+
+### KIA1105 - This host subset combination is already referenced in another route destination
+
+Istio allows you to apply rules over the traffic targetting to a specific service. In order to achieve that, it is necessary to add those rules into either _http_ , _tcp_ or _tls_ fields in a VirtualService. In each field it is possible to specify rules for redirection or forwarding traffic. Those rules are the _RouteDestination_ and _HTTPRouteDestination_ structs. Each structs defines where the traffic is shifted to using _host_ and _subset_ fields. This warning message refers to the fact of referencing one host subset combination more than one time within the same route. Galley, Istio module in charge of configuration validation, allows host subset combination duplicity. However, the mesh it might become broken when there are different duplicates. Also, the presented warning might help spoting a typo.
+
+#### Resolution
+
+Make sure there is only one reference to the same host subset combination for each RouteDestination. Either [HTTPRouteDestination](https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRouteDestination) or [RouteDestination](https://istio.io/docs/reference/config/networking/virtual-service/#RouteDestination).
+
+#### Severity
+
+__Warning
+
+#### Example
+
+
+    apiVersion: networking.istio.io/v1alpha3
+    kind: VirtualService
+    metadata:
+      name: reviews
+    spec:
+      hosts:
+        - reviews
+      http:
+      - route:
+        - destination:
+            host: reviews
+            subset: v1
+          weight: 80
+        - destination:
+            host: reviews
+            subset: v2 # duplicate
+          weight: 10
+        - destination:
+            host: reviews
+            subset: v2 # duplicate
+          weight: 10
+
+
+#### See Also
+
+  * [Istio documentation about HTTP Route Destination struct](https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRouteDestination)
+  * [Istio documentation about Route Destination struct](https://istio.io/docs/reference/config/networking/virtual-service/#RouteDestination)
+  * [Validator source code](https://github.com/kiali/kiali/blob/v1.42.0/business/checkers/virtualservices/route_checker.go)
+
+### KIA1106 - More than one Virtual Service for same host
+
+A VirtualService defines a set of traffic routing rules to apply when a host is addressed. Each routing rule defines matching criteria for traffic of a specific protocol. If the traffic is matched, then it is sent to a named destination service (or subset/version of it) defined in the registry.
+
+#### Resolution
+
+This is a valid configuration only if two VirtualServices share the same host but are bound to a different gateways, sidecars do not accept this behavior. There are several caveats when using this method and defining the same parts in multiple Virtual Service definitions is not recommended. While Istio will merge the configuration, it does not guarantee any ordering for cross-resource merging and only the first seen configuration is applied (rest ignored). As recommended, each VS definition should have a ‘catch-all’ situation, but this can only be defined in a definition affecting the same host.
+
+#### Severity
+
+__Warning
+
+#### Example
+
+
+    apiVersion: networking.istio.io/v1alpha3
+    kind: VirtualService
+    metadata:
+      name: reviews
+    spec:
+      hosts:
+        - reviews
+      http:
+      - route:
+        - destination:
+            host: reviews
+            subset: v1
+          weight: 90
+        - destination:
+            host: reviews
+            subset: v2
+          weight: 10
+    ---
+    apiVersion: networking.istio.io/v1alpha3
+    kind: VirtualService
+    metadata:
+      name: reviews-cp
+    spec:
+      hosts:
+        - reviews
+      http:
+      - route:
+        - destination:
+            host: reviews
+            subset: v1
+          weight: 90
+        - destination:
+            host: reviews
+            subset: v2
+          weight: 10
+
+
+#### See Also
+
+  * [Istio documentation: Split large virtual services and destination rules into multiple resources](https://istio.io/docs/ops/best-practices/traffic-management/#split-virtual-services)
+  * [Validator source code](https://github.com/kiali/kiali/blob/v1.42.0/business/checkers/virtualservices/single_host_checker.go)
+
+### KIA1107 - Subset not found
+
+VirtualService routes matching requests to a service inside your mesh. Routing can also match a subset of traffic to a certain version of it for example. The subsets referred in a VirtualService have to be defined in one DestinationRule.
+
+If one route in the VirtualService points to a subset that doesn’t exist Istio won’t be able to send traffic to a service.
+
+#### Resolution
+
+Fix the routes that points to a non existing subsets. It might be fixing a typo in the subset’s name or defining the missing subset in a DestinationRule.
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    apiVersion: networking.istio.io/v1alpha3
+    kind: VirtualService
+    metadata:
+      name: reviews
+    spec:
+      hosts:
+        - reviews
+      http:
+      - route:
+        - destination:
+            host: reviews
+            subset: nosubset
+          weight: 90
+        - destination:
+            host: reviews
+            subset: v2
+          weight: 10
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.42.0/business/checkers/virtualservices/subset_presence_checker.go)
+
+### KIA1108 - Preferred nomenclature: /
+
+A virtual service may include a list of gateways which the defined routes should be applied to. Gateways in other namespaces may be referred to by /; specifying a gateway with no namespace qualifier is the same as specifying the VirtualService’s namespace.
+
+#### Resolution
+
+Move the nomenclature of the gateways into the supported Istio form: /
+
+#### Example
+
+
+    kind: VirtualService
+    apiVersion: networking.istio.io/v1alpha3
+    metadata:
+      name: bookinfo
+      namespace: bookinfo
+    spec:
+      hosts:
+        - '*'
+      gateways:
+        - bookinfo-gateway.bookinfo.svc.cluster.local # unsupported format
+        - bookinfo/bookinfo-gateway # works
+      http:
+        - match:
+            - uri:
+                exact: /productpage
+            - uri:
+                prefix: /static
+            - uri:
+                exact: /login
+            - uri:
+                exact: /logout
+            - uri:
+                prefix: /api/v1/products
+          route:
+            - destination:
+                host: productpage
+                port:
+                  number: 9080
+    ---
+    kind: Gateway
+    apiVersion: networking.istio.io/v1alpha3
+    metadata:
+      name: bookinfo-gateway
+      namespace: bookinfo
+    spec:
+      servers:
+        - hosts:
+            - '*'
+          port:
+            name: http
+            number: 80
+            protocol: HTTP
+      selector:
+        istio: ingressgateway
+
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.42.0/business/checkers/virtualservices/no_gateway_checker.go)
+
+### KIA1109 - L7 VirtualService for mesh traffic in Ambient namespace requires waypoint enrollment (istio.io/use-waypoint)
+
+VirtualServices that provide HTTP/TLS routing for in-mesh (east-west) traffic require a waypoint in Ambient Mesh. When Kiali cannot resolve the destination service, it falls back to checking whether the CR’s Ambient namespace is enrolled with `istio.io/use-waypoint`.
+
+VirtualServices that only bind to named ingress/egress Gateways do not need a waypoint and do not trigger this warning. TCP-only VirtualServices are L4 and are also skipped.
+
+#### Resolution
+
+Enroll the Ambient namespace or destination service with `istio.io/use-waypoint`. See [Ambient L7 Istio config validations](/docs/features/ambient/#ambient-l7-istio-config-validations).
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Use a waypoint proxy](https://istio.io/latest/docs/ambient/usage/waypoint/)
+
+### KIA1113 - L7 VirtualService targets a service not enrolled to use a waypoint (istio.io/use-waypoint)
+
+An L7 VirtualService for mesh traffic targets an Ambient service that is not enrolled for a waypoint (missing `istio.io/use-waypoint`, or set to `none`). Without enrollment, the HTTP/TLS routes will not take effect for that service.
+
+#### Resolution
+
+Label the destination service or its namespace with `istio.io/use-waypoint`, or remove the L7 mesh routes if they are not needed.
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Use a waypoint proxy](https://istio.io/latest/docs/ambient/usage/waypoint/)
+
+### KIA1114 - L7 VirtualService should be in the same namespace as the Ambient destination service to take effect
+
+In Ambient Mesh, L7 VirtualServices that target a service in another namespace typically do not take effect for that Ambient destination. The VirtualService should live in the same namespace as the destination service.
+
+#### Resolution
+
+Move the VirtualService into the destination service namespace, or redefine the hosts so the CR and Ambient service are co-located.
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Use a waypoint proxy](https://istio.io/latest/docs/ambient/usage/waypoint/)
+
+## RequestAuthentication
+
+### KIA1110 - RequestAuthentication in Ambient namespace requires waypoint enrollment (istio.io/use-waypoint)
+
+RequestAuthentication (JWT validation) is an L7 feature enforced by a waypoint in Ambient Mesh. The Ambient namespace or selected workloads must be enrolled with `istio.io/use-waypoint`.
+
+#### Resolution
+
+Enroll the namespace or selected workloads with `istio.io/use-waypoint` pointing to a waypoint proxy. See [Ambient L7 Istio config validations](/docs/features/ambient/#ambient-l7-istio-config-validations).
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Use a waypoint proxy](https://istio.io/latest/docs/ambient/usage/waypoint/)
+  * [RequestAuthentication](https://istio.io/docs/reference/config/security/request_authentication/)
+
+### KIA1115 - RequestAuthentication in Ambient requires targetRefs to a Service or Gateway; selector policies are ignored by waypoints
+
+In Ambient Mesh, waypoint proxies ignore selector-based RequestAuthentications. Policies must attach via `targetRef` or `targetRefs` to a Service or Gateway.
+
+#### Resolution
+
+Add `targetRefs` (or `targetRef`) to a Service or Gateway instead of relying only on a workload selector.
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Policy attachment](https://istio.io/latest/docs/ambient/usage/waypoint/#policy-attachment)
+  * [RequestAuthentication](https://istio.io/docs/reference/config/security/request_authentication/)
+
+## WasmPlugin
+
+### KIA1111 - WasmPlugin in Ambient namespace requires waypoint enrollment (istio.io/use-waypoint)
+
+WasmPlugins in Ambient namespaces require a waypoint to take effect. The Ambient namespace or selected workloads must be enrolled with `istio.io/use-waypoint`. This check only runs when the WasmPlugin namespace is Ambient.
+
+#### Resolution
+
+Enroll the namespace or selected workloads with `istio.io/use-waypoint` pointing to a waypoint proxy. See [Ambient L7 Istio config validations](/docs/features/ambient/#ambient-l7-istio-config-validations).
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Use a waypoint proxy](https://istio.io/latest/docs/ambient/usage/waypoint/)
+  * [WasmPlugin](https://istio.io/docs/reference/config/proxy_extensions/wasm-plugin/)
+
+### KIA1116 - WasmPlugin in Ambient requires targetRefs to a Service or Gateway; selector policies are ignored by waypoints
+
+In Ambient Mesh, waypoint proxies ignore selector-based WasmPlugins. The plugin must attach via `targetRef` or `targetRefs` to a Service or Gateway. This check only runs when the WasmPlugin namespace is Ambient.
+
+#### Resolution
+
+Add `targetRefs` (or `targetRef`) to a Service or Gateway instead of relying only on a workload selector.
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Policy attachment](https://istio.io/latest/docs/ambient/usage/waypoint/#policy-attachment)
+  * [WasmPlugin](https://istio.io/docs/reference/config/proxy_extensions/wasm-plugin/)
+
+## Telemetry
+
+### KIA1112 - L7 Telemetry in Ambient namespace requires waypoint enrollment (istio.io/use-waypoint)
+
+Telemetry resources that configure L7 features (tracing, access logging, or customized HTTP metrics) require a waypoint in Ambient Mesh. L4-only Telemetry (basic TCP metrics) does not trigger this warning. This check only runs when the Telemetry namespace is Ambient.
+
+#### Resolution
+
+Enroll the namespace or selected workloads with `istio.io/use-waypoint` pointing to a waypoint proxy. See [Ambient L7 Istio config validations](/docs/features/ambient/#ambient-l7-istio-config-validations).
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Use a waypoint proxy](https://istio.io/latest/docs/ambient/usage/waypoint/)
+  * [Telemetry](https://istio.io/docs/reference/config/telemetry/)
+
+### KIA1117 - L7 Telemetry in Ambient requires targetRefs to a Service or Gateway; selector policies are ignored by waypoints
+
+In Ambient Mesh, waypoint proxies ignore selector-based L7 Telemetry. The resource must attach via `targetRef` or `targetRefs` to a Service or Gateway. L4-only Telemetry does not trigger this warning. This check only runs when the Telemetry namespace is Ambient.
+
+#### Resolution
+
+Add `targetRefs` (or `targetRef`) to a Service or Gateway instead of relying only on a workload selector.
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Policy attachment](https://istio.io/latest/docs/ambient/usage/waypoint/#policy-attachment)
+  * [Telemetry](https://istio.io/docs/reference/config/telemetry/)
+
+## ServiceEntries
+
+### KIA1211 - More than one ServiceEntry for the same host and port
+
+Istio merges ServiceEntries that share the same hostname within a namespace. When multiple ServiceEntries define the same host and port combination, Istio’s merging behavior can lead to unpredictable traffic routing. Depending on the order Istio processes the resources, traffic may be routed to an unintended destination or connections may fail entirely.
+
+This validation warns when two or more ServiceEntries across any namespace define overlapping host and port combinations with the same protocol. While the mesh may still route traffic, the behavior is fragile and depends on resource processing order.
+
+#### Resolution
+
+Consolidate overlapping ServiceEntries into a single resource that defines all the required ports for a given host. If different namespaces need to reference the same external service, use an `exportTo` configuration to share a single ServiceEntry.
+
+#### Severity
+
+__Warning
+
+#### Example
+
+
+    apiVersion: networking.istio.io/v1
+    kind: ServiceEntry
+    metadata:
+      name: example-https
+      namespace: bookinfo
+    spec:
+      hosts:
+      - api.example.com
+      ports:
+      - name: https
+        number: 443
+        protocol: HTTPS
+      location: MESH_EXTERNAL
+      resolution: DNS
+    ---
+    apiVersion: networking.istio.io/v1
+    kind: ServiceEntry
+    metadata:
+      name: example-https-duplicate  # Duplicate: same host and port as above
+      namespace: bookinfo
+    spec:
+      hosts:
+      - api.example.com
+      ports:
+      - name: https-alt
+        number: 443
+        protocol: HTTPS
+      location: MESH_EXTERNAL
+      resolution: DNS
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/master/business/checkers/serviceentries/multi_match_checker.go)
+  * [Istio ServiceEntry documentation](https://istio.io/docs/reference/config/networking/service-entry/)
+
+### KIA1212 - ServiceEntries have conflicting protocols for the same host and port
+
+When multiple ServiceEntries define the same host and port number but with different protocols (e.g., one uses HTTP and another uses HTTPS), Istio cannot correctly determine how to handle traffic for that endpoint. The control plane merges these entries and the resulting listener may use the wrong protocol, causing connection failures, TLS errors, or traffic blackholing.
+
+This is a more severe variant of KIA1211. Protocol mismatches on the same host and port are almost always a configuration error that will result in broken traffic.
+
+#### Resolution
+
+Ensure all ServiceEntries that share the same host and port also use the same protocol. If different protocols are needed for the same host, use different port numbers. Alternatively, consolidate the entries into a single ServiceEntry with the correct protocol.
+
+#### Severity
+
+__Warning
+
+#### Example
+
+
+    apiVersion: networking.istio.io/v1
+    kind: ServiceEntry
+    metadata:
+      name: example-https
+      namespace: bookinfo
+    spec:
+      hosts:
+      - api.example.com
+      ports:
+      - name: https-13835
+        number: 13835
+        protocol: HTTPS
+      location: MESH_EXTERNAL
+      resolution: DNS
+    ---
+    apiVersion: networking.istio.io/v1
+    kind: ServiceEntry
+    metadata:
+      name: example-http  # Conflict: same host and port but different protocol
+      namespace: bookinfo
+    spec:
+      hosts:
+      - api.example.com
+      ports:
+      - name: http-13835
+        number: 13835
+        protocol: HTTP
+      location: MESH_EXTERNAL
+      resolution: DNS
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/master/business/checkers/serviceentries/multi_match_checker.go)
+  * [Istio ServiceEntry documentation](https://istio.io/docs/reference/config/networking/service-entry/)
+  * [Istio issue #54988 - ServiceEntry host:port overlap causes NoClusterFound](https://github.com/istio/istio/issues/54988)
+
+## K8s Routes
+
+### KIA1401 - Route is pointing to a non-existent or inaccessible K8s gateway
+
+Gateway API Protocol Route could be pointing to a [k8s] Gateway that the Route wants to be attached to. When the namespace field is not specified it takes Gateways from the current Route’s namespace. Here the error indicates that the referenced Gateway is not found in the provided namespace. If the [k8s] Gateway is in another namespace, then that gateway should be shared to the Route’s namespace. The Gateway API supports cross-namespace routing, allowing Gateways and Routes to be deployed into different namespaces with routes attaching to Gateways across namespace boundaries.
+
+#### Resolution
+
+Fix the parentRefs field to target to an existing gateway. Or share the Gateway to the namespace where the Route is located.
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    kind: HTTPRoute
+    apiVersion: gateway.networking.k8s.io/v1alpha2
+    metadata:
+      name: httproute
+      namespace: bookinfo
+    spec:
+      parentRefs:
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          namespace: istio-system
+          name: gatewayapi
+      hostnames:
+        - details
+
+
+#### See Also
+
+  * [Cross-Namespace Routing](https://gateway-api.sigs.k8s.io/guides/multiple-ns/)
+  * [Validator source code](https://github.com/kiali/kiali/blob/master/business/checkers/k8shttproutes/no_k8sgateway_checker.go)
+
+### KIA1402 - Reference doesn’t have a valid service (Service name not found)
+
+Gateway API Route could be pointing to a Service inside your mesh the Route sends the traffic to. A Service name should be specified, not a hostname. This Service can be a certain version of a parent Service, but in that case a separate Service is required to be created. When the namespace field is not specified it takes Service from the current Route’s namespace. In a case of referencing to a Service from remote namespace, a ReferenceGrant object needs to be created to enable cross namespace references. Here the error indicates that the referenced Service is not found in the provided namespace or the ReferenceGrant is missing (in a case of remote namespace).
+
+#### Resolution
+
+Correct the backendRefs name to point to a correct Service (in this namespace or to other namespaces):
+
+  * Deploy the missing Service to the mesh, create a ReferenceGrant object in a case of remote namespace.
+  * Or remove the configuration linking to that non-existing Service.
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    kind: HTTPRoute
+    apiVersion: gateway.networking.k8s.io/v1alpha2
+    metadata:
+      name: httproute
+      namespace: bookinfo
+    spec:
+      parentRefs:
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          namespace: istio-system
+          name: gatewayapi
+      hostnames:
+        - reviews
+      rules:
+        - matches:
+            - path:
+                type: PathPrefix
+                value: /get
+          backendRefs:
+            - group: ''
+              kind: Service
+              name: reviews-v1
+              namespace: default
+              port: 9080
+    ---
+    apiVersion: gateway.networking.k8s.io/v1beta1
+    kind: ReferenceGrant
+    metadata:
+      name: refgrant
+      namespace: default
+    spec:
+      from:
+      - group: gateway.networking.k8s.io
+        kind: HTTPRoute
+        namespace: bookinfo
+      to:
+      - group: ""
+        kind: Service
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/blob/master/business/checkers/k8shttproutes/no_host_checker.go)
+  * [Reference Grant](https://gateway-api.sigs.k8s.io/reference/api-types/referencegrant)
+
+## Workloads
+
+### KIA1301 - This workload is not covered by any authorization policy
+
+Istio Authorization Policy enables access control on workloads in the mesh. Auth Policy selector will match with workloads in the same namespace as the authorization policy. If the authorization policy is in the root namespace, the selector will additionally match with workloads in all namespaces. This validation shows, that the selector match did not happen.
+
+#### Resolution
+
+Add Autorization Policy which selector matches with Workload’s label selector.
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.52.0/business/checkers/workloads/uncovered_workload_checker.go)
+  * [Istio documentation](https://istio.io/docs/reference/config/security/authorization-policy)
+  * [Definition of a source](https://istio.io/docs/reference/config/security/authorization-policy/#Source)
+
+## Ambient Workloads
+
+### KIA1311 - This workload has both sidecar and Ambient label
+
+The workload has both sidecar and Ambient labels, but the traffic it is been redirected to Ambient as it has the Ambient traffic redirection annotation (`ambient.istio.io/redirection`). Workload should not have a sidecar if it’s running in Ambient mode.
+
+#### Resolution
+
+Remove either the sidecar or the Ambient labels depending on your desired setup.
+
+#### Severity
+
+__Error
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/master/business/checkers/ambient/ambient_workload_checker.go)
+  * [Istio documentation](https://istio.io/latest/docs/ambient/usage/add-workloads/)
+  * [Troubleshooting Istio Ambient](https://github.com/istio/istio/wiki/Troubleshooting-Istio-Ambient)
+
+### KIA1312 - This workload has waypoint labels but is not in Ambient
+
+The workload has the waypoint labels but is not included in the Ambient Mesh. The Waypoint labels are only used with Ambient workloads.
+
+#### Resolution
+
+Ensure the workload is in an Ambient-enabled namespace or remove the label.
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/master/business/checkers/ambient/ambient_workload_checker.go)
+  * [Istio documentation](https://istio.io/latest/docs/ambient/usage/add-workloads/)
+  * [Troubleshooting Istio Ambient](https://github.com/istio/istio/wiki/Troubleshooting-Istio-Ambient)
+
+### KIA1313 - This workload has annotated waypoint but it does not exist or is misconfigured
+
+The workload has a Waypoint label but the Waypoint does not exist or is misconfigured. The specified waypoint is not found or incorrectly referenced.
+
+#### Resolution
+
+Check the name and namespace of the waypoint or remove the label.
+
+#### Severity
+
+__Error
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/master/business/checkers/ambient/ambient_workload_checker.go)
+  * [Istio documentation](https://istio.io/latest/docs/ambient/usage/add-workloads/)
+  * [Troubleshooting Istio Ambient](https://github.com/istio/istio/wiki/Troubleshooting-Istio-Ambient)
+
+### KIA1314 - This workload has a sidecar label and ambient redirection
+
+The pod has a sidecar injected and the Ambient label. The Ambient redirection won’t take effect until the sidecar is removed.
+
+#### Resolution
+
+Restart the pod to remove the sidecar and allow Ambient redirection to take effect.
+
+#### Severity
+
+__Error
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/master/business/checkers/ambient/ambient_workload_checker.go)
+  * [Istio documentation](https://istio.io/latest/docs/ambient/usage/add-workloads/)
+  * [Troubleshooting Istio Ambient](https://github.com/istio/istio/wiki/Troubleshooting-Istio-Ambient)
+
+### KIA1315 - This workload has a pod with both a sidecar container and ambient labels
+
+Direct conflict between sidecar and Ambient. Workload has both `sidecar.istio.io/inject: true` and `ambient.istio.io/redirection: enabled`.
+
+#### Resolution
+
+Use only one mode: Ambient or Sidecar.
+
+#### Severity
+
+__Error
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/master/business/checkers/ambient/ambient_workload_checker.go)
+  * [Istio documentation](https://istio.io/latest/docs/ambient/usage/add-workloads/)
+  * [Troubleshooting Istio Ambient](https://github.com/istio/istio/wiki/Troubleshooting-Istio-Ambient)
+
+### KIA1316 - This workload has a sidecar but is in an Ambient-enabled namespace
+
+Workload has a sidecar but is in an Ambient-enabled namespace. This may cause confusion or unexpected behavior, though it’s technically allowed.
+
+#### Resolution
+
+Prefer using either sidecar or Ambient mode — not both.
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/master/business/checkers/ambient/ambient_workload_checker.go)
+  * [Istio documentation](https://istio.io/latest/docs/ambient/usage/add-workloads/)
+  * [Troubleshooting Istio Ambient](https://github.com/istio/istio/wiki/Troubleshooting-Istio-Ambient)
+
+### KIA1317 - This workload has L7 Authorization Policies but no Waypoint
+
+This check applies only to Ambient workloads. Sidecar and out-of-mesh workloads are excluded: sidecars already enforce L7 AuthorizationPolicies, and out-of-mesh workloads ignore them. It must not appear in sidecar-only namespaces.
+
+An Ambient workload is targeted by an L7 AuthorizationPolicy (for example a policy that uses HTTP methods, paths, hosts, request principals, or L7 `when` conditions) but has no waypoint. In Ambient, L7 policies require a waypoint to take effect.
+
+Kiali only warns for the workloads that the policy actually targets:
+
+  * selector match on the workload, or
+  * `targetRefs` to a Service that selects the workload, or
+  * a namespace-wide policy (no selector and no targetRefs)
+
+Workloads that are not selected by the L7 policy do not get this warning. L4-only AuthorizationPolicies do not trigger it. Waypoint proxies and Gateway workloads are also excluded.
+
+#### Resolution
+
+Add a waypoint and enroll the workload or namespace with `istio.io/use-waypoint` so L7 policies are properly enforced. See [Ambient L7 Istio config validations](/docs/features/ambient/#ambient-l7-istio-config-validations).
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/master/business/checkers/ambient/ambient_workload_checker.go)
+  * [Istio documentation](https://istio.io/latest/docs/ambient/usage/add-workloads/)
+  * [Use a waypoint proxy](https://istio.io/latest/docs/ambient/usage/waypoint/)
+  * [Troubleshooting Istio Ambient](https://github.com/istio/istio/wiki/Troubleshooting-Istio-Ambient)
+
+## Generic
+
+### KIA0002 - More than one selector-less object in the same namespace
+
+This validation refers to the usage of the `selector`. Selector-less Istio objects are those objects that don’t have the `selector` field specified. Therefore, objects that apply to all the workloads of a namespace (or whole mesh if the namespace is the same as the control plane namespace).
+
+This validation warns you that you have two different objects living in the same namespace. This may leave an non-deterministic or unexpected behavior on the workloads of the namespace.
+
+#### Resolution
+
+The natural solution is to merge both objects. In case there are different behaviors you want to apply, consider to define the `selector` field targeting a specific set of workloads.
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    apiVersion: "security.istio.io/v1beta1"
+    kind: "PeerAuthentication"
+    metadata:
+      name: "default"
+      namespace: "bookinfo"
+    spec:
+      mtls:
+        mode: STRICT
+    ---
+    apiVersion: "security.istio.io/v1beta1"
+    kind: "PeerAuthentication"
+    metadata:
+      name: "duplicate"
+      namespace: "bookinfo"
+    spec:
+      mtls:
+        mode: STRICT
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.42.0/business/checkers/common/multi_match_selector_checker.go)
+
+### KIA0003 - More than one object applied to the same workload
+
+This validation refers to the usage of the `selector`. In this field are defined the labels of the workloads that this object will be applied to. It might be one or more workloads in the same namespace.
+
+This validation warns the scenario where there are two different objects applying to the same workload(s). This may leave an undeterministic or unexpected behavior on the workloads of the namespace.
+
+#### Resolution
+
+There isn’t a standard solution for that. It is a good practice not to have multiple rules of the same kind applying to the same workloads. Otherwise you would end up having interferences between objects and having troubles when debugging. The first approach would be to merge both objects into one if possible. The second approach would be to reorganize the objects of the same kind in a way that each one only applies to a different set of workloads. Applying no change into the objects is also an option although not desiderable.
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    apiVersion: "security.istio.io/v1beta1"
+    kind: "PeerAuthentication"
+    metadata:
+      name: "productpage"
+      namespace: "bookinfo"
+    spec:
+      selector:
+        matchLabels:
+          app: productpage
+      mtls:
+        mode: STRICT
+    ---
+    apiVersion: "security.istio.io/v1beta1"
+    kind: "PeerAuthentication"
+    metadata:
+      name: "productpage-disable-80"
+      namespace: "bookinfo"
+    spec:
+      selector:
+        matchLabels:
+          app: productpage
+          version: v1
+      mtls:
+        mode: STRICT
+      portLevelMtls:
+        80:
+          mode: DISABLE
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.42.0/business/checkers/common/workload_selector_checker.go)
+
+### KIA0004 - No matching workload found for the selector in this namespace
+
+This validation warns the scenario where there are not workloads matching with the `selector` labels. In other terms, this object doesn’t have any implication into the mesh.
+
+#### Resolution
+
+There are three scenarios: either change the labels to match an existing workload (useful with typos), deploy a workload that match with those labels or safely remove this object.
+
+#### Severity
+
+__Warning
+
+#### Example
+
+
+    apiVersion: "security.istio.io/v1beta1"
+    kind: "PeerAuthentication"
+    metadata:
+      name: "nomatchingworkloads"
+      namespace: "bookinfo"
+    spec:
+      selector:
+        matchLabels:
+          app: wrong-typo
+          version: v1
+      mtls:
+        mode: STRICT
+      portLevelMtls:
+        80:
+          mode: DISABLE
+
+
+#### See Also
+
+  * [Validator source code](https://github.com/kiali/kiali/tree/v1.42.0/business/checkers/common/workload_selector_checker.go)
+
+### KIA0005 - No matching namespace found or namespace is not accessible
+
+This validation error shows that the namespace where the config object is exported is not accessible or does not exist.
+
+#### Resolution
+
+Choose existing and accessible namespace to export to.
+
+#### Severity
+
+__Error
+
+## K8s Gateway
+
+### KIA1501 - More than one K8s Gateway for the same host and port combination
+
+A k8s Gateway defines a point where traffic can be translated to Services, within the cluster. This is defined through listeners or addresses. This validation warns when finding multiple Listener definitions for the same port and host combination, in different k8s Gateways. In this case the traffic handling can be in conflict.
+
+The exception to this rule is where the listeners specify different handlers. That is the reason why the severity is a warning.
+
+#### Resolution
+
+Remove or merge the duplicate k8s gateway entries.
+
+#### Severity
+
+__Warning
+
+#### Example
+
+
+    kind: Gateway
+    apiVersion: gateway.networking.k8s.io/v1alpha2
+    spec:
+      gatewayClassName: istio
+      listeners:
+        - name: default
+          hostname: host.com
+          port: 80
+          protocol: HTTP
+          allowedRoutes:
+            namespaces:
+              from: Same
+              selector: {}
+    ---
+    kind: Gateway
+    apiVersion: gateway.networking.k8s.io/v1alpha2
+    spec:
+      gatewayClassName: istio
+      listeners:
+        - name: primary
+          hostname: host.com
+          port: 80
+          protocol: HTTP
+          allowedRoutes:
+            namespaces:
+              from: Same
+              selector: {}
+
+### KIA1502 - More than one K8s Gateway for the address and type combination
+
+A k8s Gateway defines a point where traffic can be translated to Services within the cluster. This is defined through listeners or addresses. This validation warns when finding more than one address (type and value) in different k8s Gateways, where the traffic handling can be in conflict.
+
+#### Resolution
+
+Remove or merge the duplicate k8s gateway entries.
+
+#### Severity
+
+__Warning
+
+#### Example
+
+
+    kind: Gateway
+    apiVersion: gateway.networking.k8s.io/v1alpha2
+    spec:
+      gatewayClassName: istio
+      listeners:
+        - name: default
+          hostname: example.com
+          port: 80
+          protocol: HTTP
+          allowedRoutes:
+            namespaces:
+              from: Same
+              selector: {}
+      addresses:
+        - type: Hostname
+          value: example.com
+    ---
+    kind: Gateway
+    apiVersion: gateway.networking.k8s.io/v1alpha2
+    spec:
+      gatewayClassName: istio
+      listeners:
+        - name: secondary
+          hostname: secondary.com
+          port: 9080
+          protocol: HTTP
+          allowedRoutes:
+            namespaces:
+              from: Same
+              selector: {}
+      addresses:
+        - type: Hostname
+          value: example.com
+
+### KIA1503 - Each listener must have a unique combination of Hostname, Port, and Protocol
+
+A k8s Gateway cannot have more than one listener with the same Hostname, Port and Protocol.
+
+#### Resolution
+
+Update the hostname, port or protocol to another valid service so there are no more than one listener for the reported combination.
+
+#### Severity
+
+__Error
+
+#### Example
+
+
+    kind: Gateway
+    apiVersion: gateway.networking.k8s.io/v1alpha2
+    spec:
+      gatewayClassName: istio
+      listeners:
+        - name: default
+          hostname: example.com
+          port: 80
+          protocol: HTTP
+          allowedRoutes:
+            namespaces:
+              from: Same
+              selector: {}
+        - name: secondary
+            hostname: example.com
+            port: 80
+            protocol: HTTP
+            allowedRoutes:
+              namespaces:
+                from: Same
+                selector: { }
+
+### KIA1504 - Gateway API Class not found in Kiali configuration
+
+A k8s Gateway is referencing to a GatewayClass which is not configured in Kiali CR.
+
+#### Resolution
+
+Change the `gatewayClassName` field to reference to existing configured GatewayClass in the system, or add the missing GatewayClass into `gateway_api_classes` configuration of Kiali CR if this configuration is set. More info about configuring K8s Gateway API implementations can be found in [Gateway API Implementations](https://gateway-api.sigs.k8s.io/implementations/)
+
+#### Severity
+
+__Error
+
+## K8s ReferenceGrants
+
+ReferenceGrant is required for all cross-namespace references in Gateway API. `From` field describes the trusted namespaces and kinds that can reference the resources described in “To”. `To` field describes the resources that may be referenced by the resources described in “From”.
+
+### KIA1601 - Namespace is not found or is not accessible
+
+The namespace where ReferenceGrant `From` field is pointing is not accessible or does not exist.
+
+#### Resolution
+
+Choose existing and accessible namespace to point to.
+
+#### Severity
+
+__Error
+
+### GWAPI - Gateway API status
+
+The Gateway object provides a GatewayStatus to provide the status relative to the state represented in the spec. The validations under the GWAPI rule are generic and will highlight any invalid status created by the Gateway.
+
+#### Resolution
+
+This is a generic rule implemented by the Gateway, and each particular error should be fixed in the spec. The status should not be changed.
+
+#### Severity
+
+__Warning
+
+![GWAPI](/images/documentation/features/GWAPI.png)
+
+## Workload Groups
+
+### KIA1701 - Service Account not found in this namespace
+
+WorkloadGroup describes a collection of workload instances. It enables specifying the properties of a single workload for bootstrap and provides a template for WorkloadEntry, using the specified service account from the same namespace.
+
+A validation Warning message on a template means that, while the specified serviceAccount may exist, it is not referenced by any Pod in the same namespace.
+
+#### Resolution
+
+Correct the template to refer to an existing Service Account from the same namespace, make sure that the value is in correct format without a typo, and make sure at least one Pod references the Service Account.
+
+#### Severity
+
+__Warning
+
+#### Example
+
+
+    apiVersion: networking.istio.io/v1
+    kind: WorkloadGroup
+    metadata:
+      name: ratings-vm
+      namespace: bookinfo
+      labels:
+        app: ratings-vm
+    spec:
+      template:
+        serviceAccount: default
+
+
+#### See Also
+
+  * [Istio documentation](https://istio.io/latest/docs/reference/config/networking/workload-group)
+
+### KIA1702 - More than one Workload Group with duplicate labels found in the same namespace
+
+The set of labels from Workload Group spec metadata will be associated with each workload instance during the bootstrap process.
+
+A validation Warning message means that the labels set in this Workload Group spec metadata are also used in other Workload Group within this namespace.
+
+#### Resolution
+
+Set a unique set of labels.
+
+#### Severity
+
+__Warning
+
+#### See Also
+
+  * [Istio documentation](https://istio.io/latest/docs/reference/config/networking/workload-group)
+
+Last modified August 17, 2026: [Remove KIA1201 validation documentation (136c7bc)](https://github.com/kiali/kiali.io/commit/136c7bce0830cb1d2b19c6e19cf08202fc64ee8e)
