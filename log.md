@@ -33,3 +33,20 @@
 - Final verification: 22 pages, all under 200 lines, all frontmatter valid, all tags in taxonomy, all wikilinks resolve, all raw provenance markers resolve to existing files
 - index.md rebuilt with full catalog; log.md appended
 - Total pages: 22
+
+## [2026-09-18] create | README.md + raw/SOURCE-INVENTORY.md
+- Added README.md at repo root: overview, layout, provenance model, usage, sensitive-data policy
+- Added raw/SOURCE-INVENTORY.md: complete file→source_url map for all 81 raw sources (grouped by origin: kiali.io / raw.githubusercontent / api.github.com / medium / derived)
+- No wiki page changes; no content edits to raw sources
+- Total pages: 22
+
+## [2026-09-18] update | Merged source inventory into README.md
+- Consolidated raw/SOURCE-INVENTORY.md into README.md as the "Source inventory" appendix (headings demoted to H2/H3); deleted the standalone file
+- Updated README cross-references to point at the in-README appendix; dropped the inventory from the layout tree
+- Total pages: 22
+
+## [2026-09-18] update | .obsidian excluded from version control
+- User reversed the earlier decision: `.obsidian/` no longer tracked
+- `.gitignore` now ignores `.obsidian/` (full folder); files removed from index via `git rm --cached -r .obsidian/`
+- Files remain on disk, just untracked
+- Total pages: 22
