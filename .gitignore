@@ -1,0 +1,22 @@
+# OS cruft
+.DS_Store
+.DS_Store?
+Thumbs.db
+desktop.ini
+
+# Editor / transient files
+*~
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Obsidian editor state (machine-specific; keep local only)
+.obsidian/
+
+# Local scratch / temp
+tmp/
+*.tmp
+
+# Build / artifact output (keep the wiki + raw sources tracked)
+*.log
