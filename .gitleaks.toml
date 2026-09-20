@@ -1,0 +1,30 @@
+# Gitleaks configuration for the kiali-wiki repo.
+#
+# Why this file exists:
+#   raw/articles/kiali-io-release-notes.md is a raw, unmodified scrape of
+#   https://kiali.io/news/release-notes/. Netlify serves that site and
+#   injects an RUM / Core-Web-Vitals analytics <script> tag into every page.
+#   The tag carries a signed (HS256) JWT in the data-netlify-cwv-token attr.
+#
+#   That token is public by design (it ships in plaintext to every visitor),
+#   contains only non-secret identifiers (site_id / account_id / deploy_id),
+#   and is not a credential. But gitleaks still flags it as a "jwt" because
+#   it looks like one.
+#
+# We allowlist the CLASS of injected Netlify RUM line rather than the single
+# token value. The injected line's structure is stable across Netlify
+# deploys — only the token / deploy_id change — so a class-based regex keeps
+# the allowlist valid for future re-scrapes without re-flagging false
+# positives, while staying specific enough that it won't hide other lines.
+
+title = "kiali-wiki gitleaks config"
+
+[allowlist]
+description = "Global Allowlist"
+
+# Ignore any line that is Netlify's injected RUM/CWV analytics script tag.
+# Anchored on the two stable markers of the injected tag: the container
+# id and the cwv-token attribute. Both must be present on the line.
+regexes = [
+  '''netlify-rum-container.*data-netlify-cwv-token="''',
+]
